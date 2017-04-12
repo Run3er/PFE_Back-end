@@ -1,10 +1,10 @@
-apply plugin: 'java'
+subprojects {
+    apply plugin: 'java'
 
-jar {
-    baseName = 'proj-mngmnt-saas'
-    appendix = 'back-end'
-    version =  '0.1.0'
+    jar {
+        baseName = 'proj-mngmnt-saas'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
