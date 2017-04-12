@@ -1,3 +1,7 @@
+ext {
+    springBootVersion = '1.5.2.RELEASE'
+}
+
 subprojects {
     apply plugin: 'java'
 

@@ -1,12 +1,28 @@
-package entities;
+package projMngmntSaaS.domain.entities;
+
+import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * This contains a client's organization core details.
  */
-public class Tenant {
+@Entity
+public class Tenant
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+    @Column(nullable = false, length = 100)
     private String name;
+    @Column(nullable = false, length = 254)
     private String email;
+    @Column(length = 2000)
     private String websiteUrl;
+
+
+    public Tenant() {
+        // no-arg constructor for ORM (due to reflection use)
+    }
 
     public Tenant(String name, String email, String websiteUrl) {
         this.name = name;
@@ -34,7 +50,7 @@ public class Tenant {
         return websiteUrl;
     }
 
-    public void setWebsiteUrl(String websiteUrl) {
-        this.websiteUrl = websiteUrl;
+    public void setWebsiteUrl(String websiteURL) {
+        this.websiteUrl = websiteURL;
     }
 }
