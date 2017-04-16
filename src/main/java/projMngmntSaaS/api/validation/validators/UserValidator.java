@@ -40,7 +40,7 @@ public class UserValidator implements Validator
         if (user.getPasswordHash() == null) {
             rejectHiddenField("password", "field.empty", null, errors);
         }
-        if (PasswordHashing.isHashOfPassword(user.getPasswordHash(), user.getPasswordSalt(), "".toCharArray())) {
+        if (PasswordHashing.isHashOfPassword(user.getPasswordHash(), user.getPasswordSalt(), "")) {
             rejectHiddenField("password", "field.empty", "", errors);
         }
     }

@@ -62,7 +62,7 @@ public class User
 
     public void setPasswordHash(String password) {
         this.passwordSalt = PasswordHashing.getNextSalt();
-        this.passwordHash = PasswordHashing.hash(password.toCharArray(), this.passwordSalt);
+        this.passwordHash = PasswordHashing.hash(password, this.passwordSalt);
     }
 
     public String getFirstName() {
