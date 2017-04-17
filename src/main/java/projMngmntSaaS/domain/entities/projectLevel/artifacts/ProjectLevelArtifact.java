@@ -16,7 +16,7 @@ public class ProjectLevelArtifact
     private UUID id;
 
     @Column(nullable = false)
-    private UUID reference;
+    private UUID reference = UUID.randomUUID();
 
     public ProjectLevelArtifact() {
         // no-arg constructor for ORM (due to reflection use)
