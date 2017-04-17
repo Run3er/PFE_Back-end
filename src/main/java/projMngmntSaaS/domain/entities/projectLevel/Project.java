@@ -3,6 +3,7 @@ package projMngmntSaaS.domain.entities.projectLevel;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Set;
 public class Project extends ProjectLevel
 {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<SubProject> subProjects;
+    private Set<SubProject> subProjects = new HashSet<>();
 
     public Project() {
         // no-arg constructor for ORM (due to reflection use)

@@ -1,6 +1,7 @@
 package projMngmntSaaS.domain.entities.projectLevel;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class ProjectLevel
     private ProjectLevelUpdate currentUpdate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProjectLevelUpdate> updates;
+    private Set<ProjectLevelUpdate> updates = new HashSet<>();
 
     public ProjectLevel() {
         // no-arg constructor for ORM (due to reflection use)

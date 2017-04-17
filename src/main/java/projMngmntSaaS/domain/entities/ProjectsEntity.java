@@ -3,6 +3,7 @@ package projMngmntSaaS.domain.entities;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public class ProjectsEntity
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Project> projects;
+    private Set<Project> projects = new HashSet<>();
 
     public ProjectsEntity() {
         // no-arg constructor for ORM (due to reflection use)
