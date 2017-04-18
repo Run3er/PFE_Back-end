@@ -18,7 +18,7 @@ public abstract class ProjectLevel
     @Column(nullable = false)
     protected String name;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     protected ProjectLevelUpdate pendingUpdate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
