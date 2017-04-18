@@ -23,8 +23,4 @@ public class Project extends ProjectLevel
     public Set<SubProject> getSubProjects() {
         return subProjects;
     }
-
-    public void setSubProjects(Set<SubProject> subProjects) {
-        this.subProjects = subProjects;
-    }
 }

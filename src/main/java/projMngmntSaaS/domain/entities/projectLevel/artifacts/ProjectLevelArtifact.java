@@ -9,16 +9,16 @@ import java.util.UUID;
  * for versioning artifacts (each version being an artifact entity in the DB).
  */
 @MappedSuperclass
-public class ProjectLevelArtifact
+public abstract class ProjectLevelArtifact
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    protected UUID id;
 
     @Column(nullable = false)
-    private UUID reference = UUID.randomUUID();
+    protected UUID reference = UUID.randomUUID();
 
-    public ProjectLevelArtifact() {
+    protected ProjectLevelArtifact() {
         // no-arg constructor for ORM (due to reflection use)
     }
 

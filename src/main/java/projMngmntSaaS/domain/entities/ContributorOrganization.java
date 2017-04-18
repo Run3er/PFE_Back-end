@@ -14,8 +14,10 @@ public class ContributorOrganization
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @Column(nullable = false, length = 100)
     private String name;
+
     @OneToMany
     private List<Contribution> contributions;
 
@@ -33,9 +35,5 @@ public class ContributorOrganization
 
     public List<Contribution> getContributions() {
         return contributions;
-    }
-
-    public void setContributions(List<Contribution> contributions) {
-        this.contributions = contributions;
     }
 }

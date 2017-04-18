@@ -9,22 +9,22 @@ import java.util.UUID;
  * This provides common project level properties.
  */
 @MappedSuperclass
-public class ProjectLevel
+public abstract class ProjectLevel
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    protected UUID id;
 
     @Column(nullable = false)
-    private String name;
+    protected String name;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
-    private ProjectLevelUpdate currentUpdate;
+    protected ProjectLevelUpdate pendingUpdate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProjectLevelUpdate> updates = new HashSet<>();
+    private Set<ProjectLevelUpdate> archivedUpdates = new HashSet<>();
 
-    public ProjectLevel() {
+    protected ProjectLevel() {
         // no-arg constructor for ORM (due to reflection use)
     }
 
@@ -36,19 +36,15 @@ public class ProjectLevel
         this.name = name;
     }
 
-    public Set<ProjectLevelUpdate> getUpdates() {
-        return updates;
+    public ProjectLevelUpdate getPendingUpdate() {
+        return pendingUpdate;
     }
 
-    public void setUpdates(Set<ProjectLevelUpdate> updates) {
-        this.updates = updates;
+    public void setPendingUpdate(ProjectLevelUpdate pendingUpdate) {
+        this.pendingUpdate = pendingUpdate;
     }
 
-    public ProjectLevelUpdate getCurrentUpdate() {
-        return currentUpdate;
-    }
-
-    public void setCurrentUpdate(ProjectLevelUpdate currentUpdate) {
-        this.currentUpdate = currentUpdate;
+    public Set<ProjectLevelUpdate> getArchivedUpdates() {
+        return archivedUpdates;
     }
 }

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A sub-project is a sub group of {@link Project} activities.
@@ -21,9 +22,5 @@ public class SubProject extends ProjectLevel
 
     public Set<ConstructionSite> getSites() {
         return sites;
-    }
-
-    public void setSites(Set<ConstructionSite> sites) {
-        this.sites = sites;
     }
 }
