@@ -28,6 +28,10 @@ public abstract class ProjectLevel
         // no-arg constructor for ORM (due to reflection use)
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
