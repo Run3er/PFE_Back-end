@@ -22,7 +22,6 @@ import projMngmntSaaS.domain.entities.projectLevel.artifacts.Risk;
 import projMngmntSaaS.repositories.ProjectLevelUpdateRepository;
 import projMngmntSaaS.repositories.ProjectRepository;
 import projMngmntSaaS.repositories.ResourceRepository;
-import projMngmntSaaS.repositories.SubProjectRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
@@ -36,7 +35,7 @@ public class AppConfiguration
 {
     @Autowired
     @Qualifier("transactionManager")
-    protected PlatformTransactionManager txManager;
+    private PlatformTransactionManager txManager;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -81,6 +80,7 @@ public class AppConfiguration
                 resource.setType(ResourceType.HUMAN);
                 resourceRepository.save(resource);
                 action.setSupervisor(resource);
+                update.getResources().add(resource);
                 update.getActions().add(action);
                 //  update actions #2
                 Action actionTwo = new Action();
@@ -93,6 +93,7 @@ public class AppConfiguration
                 resourceTwo.setName("Fatma");
                 resourceTwo.setType(ResourceType.HUMAN);
                 resourceRepository.save(resourceTwo);
+                update.getResources().add(resourceTwo);
                 actionTwo.setSupervisor(resourceTwo);
                 update.getActions().add(actionTwo);
                 //  update risks
@@ -112,12 +113,16 @@ public class AppConfiguration
                 ProjectLevelUpdate updateOld = new ProjectLevelUpdate();
                 updateOld.setStatus(ProjectLevelStatus.BAD);
                 updateOld.setUpdateTime(new Date());
-                updateOld.setAdvancement(0.9f);
+                updateOld.setAdvancement(0.3f);
                 project.getArchivedUpdates().add(updateOld);
                 // sub-projects
                 SubProject subProject = new SubProject();
-                subProject.setPendingUpdate(update);
                 subProject.setName("Subby-Y");
+                ProjectLevelUpdate updateSubp = new ProjectLevelUpdate();
+                updateSubp.setStatus(ProjectLevelStatus.BAD);
+                updateSubp.setUpdateTime(new Date());
+                updateSubp.setAdvancement(0.8f);
+                subProject.setPendingUpdate(updateSubp);
                 project.getSubProjects().add(subProject);
                 projectRepository.save(project);
             }
