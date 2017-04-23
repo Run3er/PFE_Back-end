@@ -2,6 +2,8 @@ package projMngmntSaaS.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,14 +32,15 @@ public class ApiController
     }
 
     @ResponseBody
-    @RequestMapping(method = POST, value = "/projects/{projectId}/archivedUpdates")
-    public String archivePendingUpdate(@PathVariable UUID projectId) {
+    @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
+    public ResponseEntity<?> archivePendingUpdate(@PathVariable UUID projectId) {
         Project project = projectRepository.findOne(projectId);
 
         if (project == null) {
-            return "No such project.";
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         projectFullUpdateArchiver.archive(project, new Date());
-        return "OK";
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
