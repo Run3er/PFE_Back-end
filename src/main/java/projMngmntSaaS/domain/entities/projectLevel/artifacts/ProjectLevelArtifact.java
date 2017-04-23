@@ -1,12 +1,12 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.UUID;
 
 /**
- * This provides common project level artifact properties.
- * It is used to guarantee that each artifact entity has a reference identifying it, apart from its id. It is useful
- * for versioning artifacts (each version being an artifact entity in the DB).
+ * Provides common project level artifact properties.
  */
 @MappedSuperclass
 public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
@@ -15,10 +15,22 @@ public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected UUID id;
 
+    /**
+     * This is used to guarantee that each artifact entity has a reference identifying it, apart from its id.
+     * It is useful for versioning artifacts (each version being an artifact entity in the DB with its own id).
+     */
     @Column(nullable = false)
     protected UUID reference = UUID.randomUUID();
 
-    protected ProjectLevelArtifact() {
+    /**
+     * A pointer to the last updated artifact version. It is null for the original/root artifact.
+     * This is to leverage accessing an artifact's version history, avoiding multiple update-action joins.
+     */
+    @JsonIgnore
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    protected T lastVersion;
+
+    public ProjectLevelArtifact() {
         // no-arg constructor for ORM (due to reflection use)
     }
 
@@ -28,5 +40,13 @@ public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
 
     public void setReference(UUID reference) {
         this.reference = reference;
+    }
+
+    public T getLastVersion() {
+        return lastVersion;
+    }
+
+    public void setLastVersion(T lastVersion) {
+        this.lastVersion = lastVersion;
     }
 }
