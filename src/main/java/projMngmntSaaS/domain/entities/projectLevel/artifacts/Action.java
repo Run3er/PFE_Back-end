@@ -44,6 +44,40 @@ public class Action extends ProjectLevelArtifact<Action>
         // no-arg constructor for ORM (due to reflection use)
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Action action = (Action) o;
+
+        if (priority != action.priority) return false;
+        if (description != null ? !description.equals(action.description) : action.description != null) return false;
+        if (status != action.status) return false;
+        if (supervisor != null ? !supervisor.equals(action.supervisor) : action.supervisor != null) return false;
+        if (creationDate != null ? !creationDate.equals(action.creationDate) : action.creationDate != null)
+            return false;
+        if (closurePlannedDate != null ? !closurePlannedDate.equals(action.closurePlannedDate) : action.closurePlannedDate != null)
+            return false;
+        if (closureDate != null ? !closureDate.equals(action.closureDate) : action.closureDate != null) return false;
+        return comment != null ? comment.equals(action.comment) : action.comment == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (supervisor != null ? supervisor.hashCode() : 0);
+        result = 31 * result + priority;
+        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        result = 31 * result + (closurePlannedDate != null ? closurePlannedDate.hashCode() : 0);
+        result = 31 * result + (closureDate != null ? closureDate.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        return result;
+    }
+
     public String getDescription() {
         return description;
     }

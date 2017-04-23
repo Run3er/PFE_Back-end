@@ -49,6 +49,44 @@ public class Risk extends ProjectLevelArtifact<Risk>
         // no-arg constructor for ORM (due to reflection use)
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Risk risk = (Risk) o;
+
+        if (probability != risk.probability) return false;
+        if (impact != risk.impact) return false;
+        if (description != null ? !description.equals(risk.description) : risk.description != null) return false;
+        if (actionPlan != null ? !actionPlan.equals(risk.actionPlan) : risk.actionPlan != null) return false;
+        if (status != risk.status) return false;
+        if (decision != null ? !decision.equals(risk.decision) : risk.decision != null) return false;
+        if (detectionDate != null ? !detectionDate.equals(risk.detectionDate) : risk.detectionDate != null)
+            return false;
+        if (qualificationDate != null ? !qualificationDate.equals(risk.qualificationDate) : risk.qualificationDate != null)
+            return false;
+        if (closureDate != null ? !closureDate.equals(risk.closureDate) : risk.closureDate != null) return false;
+        return comment != null ? comment.equals(risk.comment) : risk.comment == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + probability;
+        result = 31 * result + impact;
+        result = 31 * result + (actionPlan != null ? actionPlan.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (decision != null ? decision.hashCode() : 0);
+        result = 31 * result + (detectionDate != null ? detectionDate.hashCode() : 0);
+        result = 31 * result + (qualificationDate != null ? qualificationDate.hashCode() : 0);
+        result = 31 * result + (closureDate != null ? closureDate.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        return result;
+    }
+
     public String getDescription() {
         return description;
     }

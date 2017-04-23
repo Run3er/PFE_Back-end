@@ -34,6 +34,21 @@ public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
         // no-arg constructor for ORM (due to reflection use)
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProjectLevelArtifact<?> that = (ProjectLevelArtifact<?>) o;
+
+        return reference != null ? reference.equals(that.reference) : that.reference == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return reference != null ? reference.hashCode() : 0;
+    }
+
     public UUID getReference() {
         return reference;
     }

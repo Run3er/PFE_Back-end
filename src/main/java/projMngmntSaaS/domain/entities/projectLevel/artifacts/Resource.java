@@ -21,6 +21,26 @@ public class Resource extends ProjectLevelArtifact<Resource>
         // no-arg constructor for ORM (due to reflection use)
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Resource resource = (Resource) o;
+
+        if (name != null ? !name.equals(resource.name) : resource.name != null) return false;
+        return type == resource.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
+    }
+
     public String getName() {
         return name;
     }
