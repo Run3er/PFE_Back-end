@@ -52,4 +52,15 @@ public class Document extends ProjectLevelArtifact<Document>
     public void setOsPath(String osPath) {
         this.osPath = osPath;
     }
+
+    @Override
+    public Document shallowClone() {
+        Document clone = new Document();
+
+        shallowCloneRootsInto(clone);
+        clone.name = name;
+        clone.osPath = osPath;
+
+        return clone;
+    }
 }

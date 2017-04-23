@@ -168,4 +168,21 @@ public class Action extends ProjectLevelArtifact<Action>
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public Action shallowClone() {
+        Action clone = new Action();
+
+        shallowCloneRootsInto(clone);
+        clone.description = description;
+        clone.status = status;
+        clone.supervisor = supervisor;
+        clone.priority = priority;
+        clone.creationDate = creationDate;
+        clone.closurePlannedDate = closurePlannedDate;
+        clone.closureDate = closureDate;
+        clone.comment = comment;
+
+        return clone;
+    }
 }

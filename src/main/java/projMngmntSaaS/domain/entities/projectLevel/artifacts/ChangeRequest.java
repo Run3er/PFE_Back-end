@@ -41,4 +41,14 @@ public class ChangeRequest extends ProjectLevelArtifact<ChangeRequest>
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public ChangeRequest shallowClone() {
+        ChangeRequest clone = new ChangeRequest();
+
+        shallowCloneRootsInto(clone);
+        clone.description = description;
+
+        return clone;
+    }
 }

@@ -56,4 +56,15 @@ public class Resource extends ProjectLevelArtifact<Resource>
     public void setType(ResourceType type) {
         this.type = type;
     }
+
+    @Override
+    public Resource shallowClone() {
+        Resource clone = new Resource();
+
+        shallowCloneRootsInto(clone);
+        clone.name = name;
+        clone.type = type;
+
+        return clone;
+    }
 }

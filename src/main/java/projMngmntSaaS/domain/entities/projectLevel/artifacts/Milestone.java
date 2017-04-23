@@ -55,4 +55,15 @@ public class Milestone extends ProjectLevelArtifact<Milestone>
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
+
+    @Override
+    public Milestone shallowClone() {
+        Milestone clone = new Milestone();
+
+        shallowCloneRootsInto(clone);
+        clone.name = name;
+        clone.dueDate = dueDate;
+
+        return clone;
+    }
 }

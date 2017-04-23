@@ -204,4 +204,23 @@ public class Risk extends ProjectLevelArtifact<Risk>
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public Risk shallowClone() {
+        Risk clone = new Risk();
+
+        shallowCloneRootsInto(clone);
+        clone.description = description;
+        clone.probability = probability;
+        clone.impact = impact;
+        clone.actionPlan = actionPlan;
+        clone.status = status;
+        clone.decision = decision;
+        clone.detectionDate = detectionDate;
+        clone.qualificationDate = qualificationDate;
+        clone.closureDate = closureDate;
+        clone.comment = comment;
+
+        return clone;
+    }
 }

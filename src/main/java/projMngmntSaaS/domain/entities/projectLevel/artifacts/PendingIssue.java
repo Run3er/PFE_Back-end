@@ -41,4 +41,14 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public PendingIssue shallowClone() {
+        PendingIssue clone = new PendingIssue();
+
+        shallowCloneRootsInto(clone);
+        clone.description = description;
+
+        return clone;
+    }
 }

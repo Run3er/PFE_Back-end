@@ -1,6 +1,7 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import projMngmntSaaS.domain.utils.CloneableEntity;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import java.util.UUID;
  * Provides common project level artifact properties.
  */
 @MappedSuperclass
-public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
+public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>> implements CloneableEntity<T>
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -63,5 +64,10 @@ public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
 
     public void setLastVersion(T lastVersion) {
         this.lastVersion = lastVersion;
+    }
+
+    public void shallowCloneRootsInto(T clone) {
+        clone.reference = reference;
+        clone.lastVersion = lastVersion;
     }
 }
