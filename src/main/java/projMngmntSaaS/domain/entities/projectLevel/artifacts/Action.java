@@ -13,7 +13,7 @@ import java.util.Date;
  * Once all actions have been completed for a project level, it is itself considered completed.
  */
 @Entity
-public class Action extends ProjectLevelArtifact
+public class Action extends ProjectLevelArtifact<Action>
 {
     private static final int PRIORITY_LOWER_BOUND = 0;
     private static final int PRIORITY_UPPER_BOUND = 3;

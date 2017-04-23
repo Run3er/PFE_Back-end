@@ -11,7 +11,7 @@ import java.util.Date;
  * It is dealt with by deciding on appropriate measures to take, before ultimately setting them up.
  */
 @Entity
-public class Risk extends ProjectLevelArtifact
+public class Risk extends ProjectLevelArtifact<Risk>
 {
     private static final int PROBABILITY_LOWER_BOUND = 0;
     private static final int PROBABILITY_UPPER_BOUND = 3;

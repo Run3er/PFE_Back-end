@@ -8,7 +8,7 @@ import java.util.Date;
  * A milestone is akin to a soft deadline. it has characterized by a name and a due date.
  */
 @Entity
-public class Milestone extends ProjectLevelArtifact
+public class Milestone extends ProjectLevelArtifact<Milestone>
 {
     @Column(nullable = false)
     private String name;

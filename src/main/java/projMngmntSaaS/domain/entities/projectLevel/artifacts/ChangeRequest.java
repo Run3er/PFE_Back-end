@@ -7,7 +7,7 @@ import javax.persistence.Entity;
  * TODO: describe a change request & extend its properties.
  */
 @Entity
-public class ChangeRequest extends ProjectLevelArtifact
+public class ChangeRequest extends ProjectLevelArtifact<ChangeRequest>
 {
     @Column(nullable = false)
     private String description;

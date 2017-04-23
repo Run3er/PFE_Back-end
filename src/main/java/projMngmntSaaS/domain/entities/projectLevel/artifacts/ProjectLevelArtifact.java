@@ -9,7 +9,7 @@ import java.util.UUID;
  * for versioning artifacts (each version being an artifact entity in the DB).
  */
 @MappedSuperclass
-public abstract class ProjectLevelArtifact
+public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>>
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

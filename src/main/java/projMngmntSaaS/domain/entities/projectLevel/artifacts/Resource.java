@@ -9,7 +9,7 @@ import javax.persistence.Entity;
  * A resource is an asset pertaining to a project level, which is used at some phase of its execution.
  */
 @Entity
-public class Resource extends ProjectLevelArtifact
+public class Resource extends ProjectLevelArtifact<Resource>
 {
     @Column(nullable = false, length = 100)
     private String name;

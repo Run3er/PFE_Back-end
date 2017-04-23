@@ -9,7 +9,7 @@ import javax.persistence.Entity;
  * TODO: handle file storage.
  */
 @Entity
-public class Document extends ProjectLevelArtifact
+public class Document extends ProjectLevelArtifact<Document>
 {
     @Column(nullable = false)
     private String name;

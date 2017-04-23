@@ -7,7 +7,7 @@ import javax.persistence.Entity;
  * TODO: describe a pending issue & extend its properties.
  */
 @Entity
-public class PendingIssue extends ProjectLevelArtifact
+public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
 {
     @Column(nullable = false)
     private String description;
