@@ -1,16 +1,14 @@
 package projMngmntSaaS.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
-
-import java.util.UUID;
+import projMngmntSaaS.repositories.general.EntitiesRepository;
 
 /**
  * {@link ConstructionSite} repository providing mainly CRUD methods.
  */
 @RepositoryRestResource(collectionResourceRel = "construction-sites", path = "construction-sites")
-public interface ConstructionSiteRepository extends JpaRepository<ConstructionSite, UUID>
+public interface ConstructionSiteRepository extends EntitiesRepository<ConstructionSite>
 {
     // Registering repository implementation automatically via Spring Data Rest
 }
