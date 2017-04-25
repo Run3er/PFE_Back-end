@@ -5,12 +5,17 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerMapping;
+import projMngmntSaaS.api.controllers.utils.ResourceAppender;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.repositories.ProjectRepository;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,14 +29,16 @@ public class ApiController
 {
     private final ProjectRepository projectRepository;
     private final ProjectFullUpdateArchiver projectFullUpdateArchiver;
+    private final ResourceAppender resourceAppender;
 
     @Autowired
-    public ApiController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver) {
+    public ApiController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
+                         ResourceAppender resourceAppender) {
         this.projectRepository = projectRepository;
         this.projectFullUpdateArchiver = projectFullUpdateArchiver;
+        this.resourceAppender = resourceAppender;
     }
 
-    @ResponseBody
     @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
     public ResponseEntity<?> archivePendingUpdate(@PathVariable UUID projectId) {
         Project project = projectRepository.findOne(projectId);
@@ -42,5 +49,50 @@ public class ApiController
         projectFullUpdateArchiver.archive(project, new Date());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
+    // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
+    // TODO: give more descriptive error responses (& use ResponseEntity<>).
+    @ResponseBody
+    @RequestMapping(method = POST, consumes = "application/json", value = {
+            "**/entities/{parentResourceId}/projects",
+            "**/projects/{parentResourceId}/sub-projects",
+            "**/sub-projects/{parentResourceId}/construction-sites",
+
+            "**/projects/{parentResourceId}/actions",
+            "**/projects/{parentResourceId}/risks",
+            "**/projects/{parentResourceId}/changeRequests",
+            "**/projects/{parentResourceId}/pendingIssues",
+            "**/projects/{parentResourceId}/resources",
+            "**/projects/{parentResourceId}/documents",
+            "**/projects/{parentResourceId}/milestones",
+
+            "**/sub-projects/{parentResourceId}/actions",
+            "**/sub-projects/{parentResourceId}/risks",
+            "**/sub-projects/{parentResourceId}/changeRequests",
+            "**/sub-projects/{parentResourceId}/pendingIssues",
+            "**/sub-projects/{parentResourceId}/resources",
+            "**/sub-projects/{parentResourceId}/documents",
+            "**/sub-projects/{parentResourceId}/milestones",
+
+            "**/construction-sites/{parentResourceId}/actions",
+            "**/construction-sites/{parentResourceId}/risks",
+            "**/construction-sites/{parentResourceId}/changeRequests",
+            "**/construction-sites/{parentResourceId}/pendingIssues",
+            "**/construction-sites/{parentResourceId}/resources",
+            "**/construction-sites/{parentResourceId}/documents",
+            "**/construction-sites/{parentResourceId}/milestones"
+    })
+    public ResponseEntity<?> appendSubResources(@PathVariable UUID parentResourceId, HttpServletRequest request,
+                                                @RequestBody Collection<Object> subResources) {
+        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String[] UriParts = restOfTheUri.split("/");
+        String subResourcePath = UriParts[UriParts.length - 1];
+        String parentResourcePath = UriParts[UriParts.length - 3];
+
+        return new ResponseEntity<>(resourceAppender.append(
+                parentResourcePath, parentResourceId, subResourcePath, subResources) ?
+                HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
     }
 }
