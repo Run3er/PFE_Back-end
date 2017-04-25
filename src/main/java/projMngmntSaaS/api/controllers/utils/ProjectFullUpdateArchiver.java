@@ -59,10 +59,7 @@ public class ProjectFullUpdateArchiver
     }
 
     /**
-     * Archives the supplied <code>project</code> state.
-     * It does this by appending the currently pending update of itself and each of its sub project levels, to their
-     * respective archived updates set.
-     * This is followed by resetting each of the currently pending update to a new instance.
+     * Archives the supplied <code>project</code> state under a new update, appended to its archived updates.
      *
      * @param project       project to archive the state of
      * @param updateTime    persisted update time for the archived update
@@ -80,57 +77,55 @@ public class ProjectFullUpdateArchiver
     }
 
     private void archiveProjectLevelUpdate(ProjectLevel projectLevel, Date updateTime) {
-        ProjectLevelUpdate pendingUpdate = projectLevel.getPendingUpdate();
-        pendingUpdate.setUpdateTime(updateTime);
-        // Going to replace it with a new pending update instance
-        ProjectLevelUpdate newPendingUpdate = new ProjectLevelUpdate(pendingUpdate);
+        ProjectLevelUpdate update = new ProjectLevelUpdate(projectLevel, updateTime);
 
         // Artifacts archiving
-        archiveArtifactCollection(pendingUpdate.getChangeRequests(), newPendingUpdate.getChangeRequests(), changeRequestRepository);
-        archiveArtifactCollection(pendingUpdate.getDocuments(), newPendingUpdate.getDocuments(), documentRepository);
-        archiveArtifactCollection(pendingUpdate.getMilestones(), newPendingUpdate.getMilestones(), milestoneRepository);
-        archiveArtifactCollection(pendingUpdate.getPendingIssues(), newPendingUpdate.getPendingIssues(), pendingIssueRepository);
-        archiveArtifactCollection(pendingUpdate.getRisks(), newPendingUpdate.getRisks(), riskRepository);
-        archiveArtifactCollection(pendingUpdate.getResources(), newPendingUpdate.getResources(), resourceRepository);
-        archiveArtifactCollection(pendingUpdate.getActions(), newPendingUpdate.getActions(), actionRepository);
+        archiveArtifactCollection(update.getChangeRequests(), projectLevel.getChangeRequests(), changeRequestRepository);
+        archiveArtifactCollection(update.getDocuments(), projectLevel.getDocuments(), documentRepository);
+        archiveArtifactCollection(update.getMilestones(), projectLevel.getMilestones(), milestoneRepository);
+        archiveArtifactCollection(update.getPendingIssues(), projectLevel.getPendingIssues(), pendingIssueRepository);
+        archiveArtifactCollection(update.getRisks(), projectLevel.getRisks(), riskRepository);
+        archiveArtifactCollection(update.getResources(), projectLevel.getResources(), resourceRepository);
+        archiveArtifactCollection(update.getActions(), projectLevel.getActions(), actionRepository);
 
-        // Setting each newPendingUpdate artifact's dependency to its unarchived (new pending) version
+        // Setting each current artifact's dependency to its unarchived version
         // Action-resource dependency
-        for (Action newPendingAction : newPendingUpdate.getActions()) {
-            for (Resource resource : newPendingUpdate.getResources()) {
-                if (newPendingAction.getSupervisor().getReference().equals(resource.getReference())) {
-                    newPendingAction.setSupervisor(resource);
-                    actionRepository.save(newPendingAction);
+        for (Action currentAction : projectLevel.getActions()) {
+            for (Resource resource : projectLevel.getResources()) {
+                if (currentAction.getSupervisor().getReference().equals(resource.getReference())) {
+                    currentAction.setSupervisor(resource);
+                    actionRepository.save(currentAction);
                     break;
                 }
             }
         }
 
-        // Archive current pending update & set up newPendingUpdate as the new current
-        projectLevel.getArchivedUpdates().add(pendingUpdate);
-        projectLevel.setPendingUpdate(newPendingUpdate);
+        // Archive update
+        projectLevel.getArchivedUpdates().add(update);
     }
 
-    private  <T extends ProjectLevelArtifact<T>> void archiveArtifactCollection(Set<T> pendingArtifactCollection,
-                                                                                Set<T> newPendingArtifactCollection,
+    private  <T extends ProjectLevelArtifact<T>> void archiveArtifactCollection(Set<T> updateArtifactCollection,
+                                                                                Set<T> currentArtifactCollection,
                                                                                 CrudRepository<T, UUID> artifactRepository) {
         // Temporary collection to avoid ConcurrentModificationException
-        Set<T> artifactCollection = new HashSet<>(pendingArtifactCollection);
+        Set<T> artifactCollection = new HashSet<>(updateArtifactCollection);
 
-        for (T pendingArtifact : artifactCollection) {
-            if (pendingArtifact.getLastVersion() != null) {
-                T originalRisk = pendingArtifact.getLastVersion();
-                if (pendingArtifact.equals(originalRisk)) {
-                    pendingArtifactCollection.remove(pendingArtifact);
-                    pendingArtifactCollection.add(originalRisk);
+        for (T currentArtifact : artifactCollection) {
+            if (currentArtifact.getLastVersion() != null) {
+                T originalRisk = currentArtifact.getLastVersion();
+                if (currentArtifact.equals(originalRisk)) {
+                    // Point update's artifact version to original entry if no nothing to update
+                    updateArtifactCollection.remove(currentArtifact);
+                    updateArtifactCollection.add(originalRisk);
                     continue;
                 }
             }
-            newPendingArtifactCollection.remove(pendingArtifact);
-            T newPendingArtifact = pendingArtifact.shallowClone();
-            artifactRepository.save(newPendingArtifact);
-            newPendingArtifact.setLastVersion(pendingArtifact);
-            newPendingArtifactCollection.add(newPendingArtifact);
+            // Create a new current artifact instance & archive current artifact (by default)
+            currentArtifactCollection.remove(currentArtifact);
+            T newCurrentArtifact = currentArtifact.shallowClone();
+            artifactRepository.save(newCurrentArtifact);
+            newCurrentArtifact.setLastVersion(currentArtifact);
+            currentArtifactCollection.add(newCurrentArtifact);
         }
     }
 }

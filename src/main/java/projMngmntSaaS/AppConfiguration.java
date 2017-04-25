@@ -19,7 +19,6 @@ import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Milestone;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Resource;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Risk;
-import projMngmntSaaS.repositories.ProjectLevelUpdateRepository;
 import projMngmntSaaS.repositories.ProjectRepository;
 import projMngmntSaaS.repositories.ResourceRepository;
 
@@ -40,8 +39,6 @@ public class AppConfiguration
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
-    private ProjectLevelUpdateRepository updateRepository;
-    @Autowired
     private ResourceRepository resourceRepository;
 
     public static void main(String[] args) {
@@ -59,15 +56,13 @@ public class AppConfiguration
                 // name
                 project.setName("Project-X");
                 // update
-                ProjectLevelUpdate update = new ProjectLevelUpdate();
-                update.setStatus(ProjectLevelStatus.BAD);
-                update.setUpdateTime(new Date());
-                update.setAdvancement(0.9f);
+                project.setStatus(ProjectLevelStatus.BAD);
+                project.setAdvancement(0.9f);
                 //  update milestones
                 Milestone milestone = new Milestone();
                 milestone.setName("Phase-I");
                 milestone.setDueDate(new Date());
-                update.getMilestones().add(milestone);
+                project.getMilestones().add(milestone);
                 //  update actions #1
                 Action action = new Action();
                 action.setDescription("important task #1");
@@ -80,8 +75,8 @@ public class AppConfiguration
                 resource.setType(ResourceType.HUMAN);
                 resourceRepository.save(resource);
                 action.setSupervisor(resource);
-                update.getResources().add(resource);
-                update.getActions().add(action);
+                project.getResources().add(resource);
+                project.getActions().add(action);
                 //  update actions #2
                 Action actionTwo = new Action();
                 actionTwo.setDescription("heavy work #2");
@@ -93,9 +88,9 @@ public class AppConfiguration
                 resourceTwo.setName("Fatma");
                 resourceTwo.setType(ResourceType.HUMAN);
                 resourceRepository.save(resourceTwo);
-                update.getResources().add(resourceTwo);
+                project.getResources().add(resourceTwo);
                 actionTwo.setSupervisor(resourceTwo);
-                update.getActions().add(actionTwo);
+                project.getActions().add(actionTwo);
                 //  update risks
                 Risk risk = new Risk();
                 risk.setDescription("risky state #15");
@@ -105,24 +100,19 @@ public class AppConfiguration
                 risk.setStatus(RiskStatus.ACTION_PLAN_ONGOING);
                 risk.setDetectionDate(new Date());
                 risk.setQualificationDate(new Date());
-                update.getRisks().add(risk);
-                update = updateRepository.save(update);
+                project.getRisks().add(risk);
+                project = projectRepository.save(project);
                 //  set current update
-                project.setPendingUpdate(update);
                 // archived updates
-                ProjectLevelUpdate updateOld = new ProjectLevelUpdate();
-                updateOld.setStatus(ProjectLevelStatus.BAD);
-                updateOld.setUpdateTime(new Date());
+                ProjectLevelUpdate updateOld = new ProjectLevelUpdate(project, new Date());
+                updateOld.setStatus(ProjectLevelStatus.GOOD);
                 updateOld.setAdvancement(0.3f);
                 project.getArchivedUpdates().add(updateOld);
                 // sub-projects
                 SubProject subProject = new SubProject();
                 subProject.setName("Subby-Y");
-                ProjectLevelUpdate updateSubp = new ProjectLevelUpdate();
-                updateSubp.setStatus(ProjectLevelStatus.BAD);
-                updateSubp.setUpdateTime(new Date());
-                updateSubp.setAdvancement(0.8f);
-                subProject.setPendingUpdate(updateSubp);
+                subProject.setStatus(ProjectLevelStatus.BAD);
+                subProject.setAdvancement(0.8f);
                 project.getSubProjects().add(subProject);
                 projectRepository.save(project);
             }

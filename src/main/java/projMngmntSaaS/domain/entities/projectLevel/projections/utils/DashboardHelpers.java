@@ -27,7 +27,7 @@ public class DashboardHelpers
                     HashMap<String, String> sps = new HashMap<>();
                     sps.put("id", sp.getId() + "");
                     sps.put("name", sp.getName());
-                    sps.put("advancement", sp.getPendingUpdate().getAdvancement() + "");
+                    sps.put("advancement", sp.getAdvancement() + "");
                     return sps;
                 })
                 .collect(Collectors.toList());

@@ -31,10 +31,6 @@ public abstract class ProjectLevelArtifact<T extends ProjectLevelArtifact<T>> im
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     protected T lastVersion;
 
-    public ProjectLevelArtifact() {
-        // no-arg constructor for ORM (due to reflection use)
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
