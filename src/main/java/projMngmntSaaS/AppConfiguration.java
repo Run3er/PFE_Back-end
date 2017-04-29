@@ -8,6 +8,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.enums.ActionStatus;
 import projMngmntSaaS.domain.entities.enums.ProjectLevelStatus;
 import projMngmntSaaS.domain.entities.enums.ResourceType;
@@ -101,9 +102,7 @@ public class AppConfiguration
                 risk.setDetectionDate(new Date());
                 risk.setQualificationDate(new Date());
                 project.getRisks().add(risk);
-                project = projectRepository.save(project);
-                //  set current update
-                // archived updates
+                //  set archived updates
                 ProjectLevelUpdate updateOld = new ProjectLevelUpdate(project, new Date());
                 updateOld.setStatus(ProjectLevelStatus.GOOD);
                 updateOld.setAdvancement(0.3f);
@@ -114,6 +113,11 @@ public class AppConfiguration
                 subProject.setStatus(ProjectLevelStatus.BAD);
                 subProject.setAdvancement(0.8f);
                 project.getSubProjects().add(subProject);
+                // projectsEntity
+                ProjectsEntity projectsEntity = new ProjectsEntity();
+                projectsEntity.setName("Default-Entity");
+//                projectsEntity = projectsEntityRepository.save(projectsEntity);
+                project.setEntity(projectsEntity);
                 projectRepository.save(project);
             }
         });

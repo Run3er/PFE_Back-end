@@ -16,10 +16,11 @@ public class ProjectsEntity
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @Column(nullable = false, length = 100)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entity")
     private Set<Project> projects = new HashSet<>();
 
     public ProjectsEntity() {
