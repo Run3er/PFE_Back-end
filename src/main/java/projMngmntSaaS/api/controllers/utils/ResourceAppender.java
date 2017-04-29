@@ -28,19 +28,6 @@ public class ResourceAppender
     @Transactional
     public boolean append(String parentResourcePath, UUID parentResrcId, String subResourcePath,
                                  Collection<?> subResources) {
-        if ("subProjects".equals(parentResourcePath)) {
-            parentResourcePath = "sub-projects";
-        }
-        if ("constructionSites".equals(parentResourcePath)) {
-            parentResourcePath = "construction-sites";
-        }
-        if ("changeRequests".equals(subResourcePath)) {
-            subResourcePath = "change-requests";
-        }
-        if ("pendingIssues".equals(subResourcePath)) {
-            subResourcePath = "pending-issues";
-        }
-
         switch (parentResourcePath) {
             case "entities":
                 ProjectsEntity entity = entityManager.find(ProjectsEntity.class, parentResrcId);
@@ -53,20 +40,20 @@ public class ResourceAppender
             case "projects":
                 Project project = entityManager.find(Project.class, parentResrcId);
                 if (project != null) {
-                    if ("sub-projects".equals(subResourcePath)) {
+                    if ("subProjects".equals(subResourcePath)) {
                         return appendResources(Project.class, SubProject.class, project.getSubProjects(), subResources);
                     }
                     else return appendArtifacts(subResourcePath, project, subResources);
                 }
-            case "sub-projects":
+            case "subProjects":
                 SubProject subProject = entityManager.find(SubProject.class, parentResrcId);
                 if (subProject != null) {
-                    if ("construction-sites".equals(subResourcePath)) {
-                        return appendResources(subProject, ConstructionSite.class, subProject.getSites(), subResources);
+                    if ("constructionSites".equals(subResourcePath)) {
+                        return appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(), subResources);
                     }
                     else return appendArtifacts(subResourcePath, subProject, subResources);
                 }
-            case "construction-sites":
+            case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
                 if (constructionSite != null) {
                     return appendArtifacts(subResourcePath, constructionSite, subResources);
@@ -82,9 +69,9 @@ public class ResourceAppender
                 return appendResources(parentResrc, Action.class, parentResrc.getActions(), subResources);
             case "risks":
                 return appendResources(parentResrc, Risk.class, parentResrc.getRisks(), subResources);
-            case "change-requests":
+            case "changeRequests":
                 return appendResources(parentResrc, ChangeRequest.class, parentResrc.getChangeRequests(), subResources);
-            case "pending-issues":
+            case "pendingIssues":
                 return appendResources(parentResrc, PendingIssue.class, parentResrc.getPendingIssues(), subResources);
             case "resources":
                 return appendResources(parentResrc, Resource.class, parentResrc.getResources(), subResources);

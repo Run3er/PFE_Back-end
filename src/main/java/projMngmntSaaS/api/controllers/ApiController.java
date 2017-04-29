@@ -57,8 +57,8 @@ public class ApiController
     @ResponseBody
     @RequestMapping(method = POST, consumes = "application/json", value = {
             "**/entities/{parentResourceId}/projects",
-            "**/projects/{parentResourceId}/sub-projects",
-            "**/sub-projects/{parentResourceId}/construction-sites",
+            "**/projects/{parentResourceId}/subProjects",
+            "**/subProjects/{parentResourceId}/constructionSites",
 
             "**/projects/{parentResourceId}/actions",
             "**/projects/{parentResourceId}/risks",
@@ -68,21 +68,21 @@ public class ApiController
             "**/projects/{parentResourceId}/documents",
             "**/projects/{parentResourceId}/milestones",
 
-            "**/sub-projects/{parentResourceId}/actions",
-            "**/sub-projects/{parentResourceId}/risks",
-            "**/sub-projects/{parentResourceId}/changeRequests",
-            "**/sub-projects/{parentResourceId}/pendingIssues",
-            "**/sub-projects/{parentResourceId}/resources",
-            "**/sub-projects/{parentResourceId}/documents",
-            "**/sub-projects/{parentResourceId}/milestones",
+            "**/subProjects/{parentResourceId}/actions",
+            "**/subProjects/{parentResourceId}/risks",
+            "**/subProjects/{parentResourceId}/changeRequests",
+            "**/subProjects/{parentResourceId}/pendingIssues",
+            "**/subProjects/{parentResourceId}/resources",
+            "**/subProjects/{parentResourceId}/documents",
+            "**/subProjects/{parentResourceId}/milestones",
 
-            "**/construction-sites/{parentResourceId}/actions",
-            "**/construction-sites/{parentResourceId}/risks",
-            "**/construction-sites/{parentResourceId}/changeRequests",
-            "**/construction-sites/{parentResourceId}/pendingIssues",
-            "**/construction-sites/{parentResourceId}/resources",
-            "**/construction-sites/{parentResourceId}/documents",
-            "**/construction-sites/{parentResourceId}/milestones"
+            "**/constructionSites/{parentResourceId}/actions",
+            "**/constructionSites/{parentResourceId}/risks",
+            "**/constructionSites/{parentResourceId}/changeRequests",
+            "**/constructionSites/{parentResourceId}/pendingIssues",
+            "**/constructionSites/{parentResourceId}/resources",
+            "**/constructionSites/{parentResourceId}/documents",
+            "**/constructionSites/{parentResourceId}/milestones"
     })
     public ResponseEntity<?> appendSubResources(@PathVariable UUID parentResourceId, HttpServletRequest request,
                                                 @RequestBody Collection<Object> subResources) {

@@ -69,7 +69,7 @@ public class ProjectFullUpdateArchiver
         archiveProjectLevelUpdate(project, updateTime);
         for (SubProject subProject : project.getSubProjects()) {
             archiveProjectLevelUpdate(subProject, updateTime);
-            for (ConstructionSite constructionSite : subProject.getSites()) {
+            for (ConstructionSite constructionSite : subProject.getConstructionSites()) {
                 archiveProjectLevelUpdate(constructionSite, updateTime);
             }
         }
