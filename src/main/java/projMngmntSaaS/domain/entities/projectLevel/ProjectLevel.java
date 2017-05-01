@@ -1,5 +1,7 @@
 package projMngmntSaaS.domain.entities.projectLevel;
 
+import projMngmntSaaS.domain.utils.UuidIdentifiable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -12,7 +14,7 @@ import java.util.UUID;
  * This provides common project level properties.
  */
 @MappedSuperclass
-public abstract class ProjectLevel extends ProjectLevelContents
+public abstract class ProjectLevel extends ProjectLevelContents implements UuidIdentifiable
 {
     @Column(nullable = false)
     protected String name;
@@ -20,6 +22,7 @@ public abstract class ProjectLevel extends ProjectLevelContents
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<ProjectLevelUpdate> archivedUpdates = new HashSet<>();
 
+    @Override
     public UUID getId() {
         return id;
     }

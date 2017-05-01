@@ -78,6 +78,11 @@ public class AppConfiguration
                 action.setSupervisor(resource);
                 project.getResources().add(resource);
                 project.getActions().add(action);
+                //  set archived updates
+                ProjectLevelUpdate updateOld = new ProjectLevelUpdate(project, new Date());
+                updateOld.setStatus(ProjectLevelStatus.GOOD);
+                updateOld.setAdvancement(0.3f);
+                project.getArchivedUpdates().add(updateOld);
                 //  update actions #2
                 Action actionTwo = new Action();
                 actionTwo.setDescription("heavy work #2");
@@ -102,11 +107,6 @@ public class AppConfiguration
                 risk.setDetectionDate(new Date());
                 risk.setQualificationDate(new Date());
                 project.getRisks().add(risk);
-                //  set archived updates
-                ProjectLevelUpdate updateOld = new ProjectLevelUpdate(project, new Date());
-                updateOld.setStatus(ProjectLevelStatus.GOOD);
-                updateOld.setAdvancement(0.3f);
-                project.getArchivedUpdates().add(updateOld);
                 // sub-projects
                 SubProject subProject = new SubProject();
                 subProject.setName("Subby-Y");
