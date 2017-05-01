@@ -9,10 +9,13 @@ import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
+import projMngmntSaaS.domain.utils.UuidIdentifiable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,83 +24,121 @@ import java.util.UUID;
 @Component
 public class ResourceAppender
 {
+    private static final String URI_NESTED_RESRC_INVALID_MSG = "URI incorrect: Nested resource invalid.";
+    private static final String URI_RESRC_INVALID_MSG = "URI incorrect: Hierarchy head resource invalid.";
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    @SuppressWarnings("unchecked")
+
     @Transactional
-    public boolean append(String parentResourcePath, UUID parentResrcId, String subResourcePath,
-                                 Collection<?> subResources) {
+    public List<UUID> append(String parentResourcePath, UUID parentResrcId, String subResourcePath,
+                                 Collection<?> subResources) throws IllegalArgumentException {
+        List<UUID> appendedResourcesIDs = new ArrayList<>();
+
         switch (parentResourcePath) {
             case "entities":
                 ProjectsEntity entity = entityManager.find(ProjectsEntity.class, parentResrcId);
-                if (entity != null) {
-                    if ("projects".equals(subResourcePath)) {
-                        return appendResources(ProjectsEntity.class, Project.class, entity.getProjects(), subResources);
-                    }
-                    else return false;
+                if (entity == null) {
+                    throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
+
+                if ("projects".equals(subResourcePath)) {
+                    appendResources(ProjectsEntity.class, Project.class, entity.getProjects(),
+                            subResources, appendedResourcesIDs);
+                }
+                else {
+                    throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
+                }
+                break;
             case "projects":
                 Project project = entityManager.find(Project.class, parentResrcId);
-                if (project != null) {
-                    if ("subProjects".equals(subResourcePath)) {
-                        return appendResources(Project.class, SubProject.class, project.getSubProjects(), subResources);
-                    }
-                    else return appendArtifacts(subResourcePath, project, subResources);
+                if (project == null) {
+                    throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
+
+                if ("subProjects".equals(subResourcePath)) {
+                    appendResources(project, SubProject.class, project.getSubProjects(),
+                            subResources, appendedResourcesIDs);
+                }
+                else appendArtifacts(project, subResourcePath, subResources, appendedResourcesIDs);
+                break;
             case "subProjects":
                 SubProject subProject = entityManager.find(SubProject.class, parentResrcId);
-                if (subProject != null) {
-                    if ("constructionSites".equals(subResourcePath)) {
-                        return appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(), subResources);
-                    }
-                    else return appendArtifacts(subResourcePath, subProject, subResources);
+                if (subProject == null) {
+                    throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
+
+                if ("constructionSites".equals(subResourcePath)) {
+                    appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(),
+                                subResources, appendedResourcesIDs);
+                }
+                else appendArtifacts(subProject, subResourcePath, subResources, appendedResourcesIDs);
+                break;
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
-                if (constructionSite != null) {
-                    return appendArtifacts(subResourcePath, constructionSite, subResources);
+                if (constructionSite == null) {
+                    throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
+
+                appendArtifacts(constructionSite, subResourcePath, subResources, appendedResourcesIDs);
+                break;
+            default:
+                throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
         }
-        // Unless parentResourceId incorrect, should never even be reached (since resource paths should be valid)
-        return false;
+        return appendedResourcesIDs;
     }
 
-    private boolean appendArtifacts(String subResourcePath, ProjectLevel parentResrc, Collection<?> subResources) {
+    private void appendArtifacts(ProjectLevel parentResrc, String subResourcePath,
+                                 Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         switch (subResourcePath) {
             case "actions":
-                return appendResources(parentResrc, Action.class, parentResrc.getActions(), subResources);
+                appendResources(parentResrc, Action.class, parentResrc.getActions(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "risks":
-                return appendResources(parentResrc, Risk.class, parentResrc.getRisks(), subResources);
+                appendResources(parentResrc, Risk.class, parentResrc.getRisks(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "changeRequests":
-                return appendResources(parentResrc, ChangeRequest.class, parentResrc.getChangeRequests(), subResources);
+                appendResources(parentResrc, ChangeRequest.class, parentResrc.getChangeRequests(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "pendingIssues":
-                return appendResources(parentResrc, PendingIssue.class, parentResrc.getPendingIssues(), subResources);
+                appendResources(parentResrc, PendingIssue.class, parentResrc.getPendingIssues(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "resources":
-                return appendResources(parentResrc, Resource.class, parentResrc.getResources(), subResources);
+                appendResources(parentResrc, Resource.class, parentResrc.getResources(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "documents":
-                return appendResources(parentResrc, Document.class, parentResrc.getDocuments(), subResources);
+                appendResources(parentResrc, Document.class, parentResrc.getDocuments(),
+                        subResources, appendedResourcesIDs);
+                break;
             case "milestones":
-                return appendResources(parentResrc, Milestone.class, parentResrc.getMilestones(), subResources);
+                appendResources(parentResrc, Milestone.class, parentResrc.getMilestones(),
+                        subResources, appendedResourcesIDs);
+                break;
+            default:
+                throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
         }
-        return false;
     }
 
-    private <T, U> boolean appendResources(T parentResource, Class<U> subResourcesType,
-                                           Collection<U> appendableCollection, Collection<?> subResources) {
+    private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType,
+             Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         ObjectMapper mapper = new ObjectMapper();
         for (Object subResource : subResources) {
-            U concreteSubResource;
+            U concreteSubResource = null;
             try {
                 concreteSubResource = mapper.convertValue(subResource, subResourcesType);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-                return false;
             }
             entityManager.persist(concreteSubResource);
             appendableCollection.add(concreteSubResource);
+            appendedResourcesIDs.add(concreteSubResource.getId());
         }
         entityManager.merge(parentResource);
-        return true;
     }
 }

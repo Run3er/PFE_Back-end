@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerMapping;
+import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.api.controllers.utils.ResourceAppender;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
-import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.repositories.ProjectRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -53,8 +54,6 @@ public class ApiController
 
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
     // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
-    // TODO: give more descriptive error responses (& use ResponseEntity<>).
-    @ResponseBody
     @RequestMapping(method = POST, consumes = "application/json", value = {
             "**/entities/{parentResourceId}/projects",
             "**/projects/{parentResourceId}/subProjects",
@@ -91,8 +90,13 @@ public class ApiController
         String subResourcePath = UriParts[UriParts.length - 1];
         String parentResourcePath = UriParts[UriParts.length - 3];
 
-        return new ResponseEntity<>(resourceAppender.append(
-                parentResourcePath, parentResourceId, subResourcePath, subResources) ?
-                HttpStatus.NO_CONTENT : HttpStatus.BAD_REQUEST);
+        List<UUID> appendedUuids;
+        try {
+            appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
+            return new ResponseEntity<>(appendedUuids,  HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
     }
 }
