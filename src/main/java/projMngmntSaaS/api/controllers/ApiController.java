@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerMapping;
 import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.api.controllers.utils.ResourceAppender;
+import projMngmntSaaS.api.controllers.utils.ResourceDeleter;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.repositories.ProjectRepository;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
@@ -31,13 +33,15 @@ public class ApiController
     private final ProjectRepository projectRepository;
     private final ProjectFullUpdateArchiver projectFullUpdateArchiver;
     private final ResourceAppender resourceAppender;
+    private final ResourceDeleter resourceDeleter;
 
     @Autowired
     public ApiController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
-                         ResourceAppender resourceAppender) {
+                         ResourceAppender resourceAppender, ResourceDeleter resourceDeleter) {
         this.projectRepository = projectRepository;
         this.projectFullUpdateArchiver = projectFullUpdateArchiver;
         this.resourceAppender = resourceAppender;
+        this.resourceDeleter = resourceDeleter;
     }
 
     @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
@@ -95,6 +99,54 @@ public class ApiController
         try {
             appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
             return new ResponseEntity<>(appendedUuids,  HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
+    // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
+    @ResponseBody
+    @RequestMapping(method = DELETE, value = {
+            "**/entities/{parentResourceId}/projects/{subResourceId}",
+            "**/projects/{parentResourceId}/subProjects/{subResourceId}",
+            "**/subProjects/{parentResourceId}/constructionSites/{subResourceId}",
+
+            "**/projects/{parentResourceId}/actions/{subResourceId}",
+            "**/projects/{parentResourceId}/risks/{subResourceId}",
+            "**/projects/{parentResourceId}/changeRequests/{subResourceId}",
+            "**/projects/{parentResourceId}/pendingIssues/{subResourceId}",
+            "**/projects/{parentResourceId}/resources/{subResourceId}",
+            "**/projects/{parentResourceId}/documents/{subResourceId}",
+            "**/projects/{parentResourceId}/milestones/{subResourceId}",
+
+            "**/subProjects/{parentResourceId}/actions/{subResourceId}",
+            "**/subProjects/{parentResourceId}/risks/{subResourceId}",
+            "**/subProjects/{parentResourceId}/changeRequests/{subResourceId}",
+            "**/subProjects/{parentResourceId}/pendingIssues/{subResourceId}",
+            "**/subProjects/{parentResourceId}/resources/{subResourceId}",
+            "**/subProjects/{parentResourceId}/documents/{subResourceId}",
+            "**/subProjects/{parentResourceId}/milestones/{subResourceId}",
+
+            "**/constructionSites/{parentResourceId}/actions/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/risks/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/changeRequests/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/pendingIssues/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/resources/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/documents/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/milestones/{subResourceId}"
+    })
+    public ResponseEntity<?> deleteSubResources(@PathVariable UUID parentResourceId, @PathVariable UUID subResourceId,
+                                                HttpServletRequest request) {
+        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String[] UriParts = restOfTheUri.split("/");
+        String subResourcePath = UriParts[UriParts.length - 2];
+        String parentResourcePath = UriParts[UriParts.length - 4];
+
+        try {
+            resourceDeleter.delete(parentResourcePath, parentResourceId, subResourcePath, subResourceId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
