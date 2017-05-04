@@ -16,6 +16,8 @@ public class Milestone extends ProjectLevelArtifact<Milestone>
     @Column(nullable = false)
     private Date dueDate;
 
+    private String description;
+
     public Milestone() {
         // no-arg constructor for ORM (due to reflection use)
     }
@@ -29,7 +31,8 @@ public class Milestone extends ProjectLevelArtifact<Milestone>
         Milestone milestone = (Milestone) o;
 
         if (name != null ? !name.equals(milestone.name) : milestone.name != null) return false;
-        return dueDate != null ? dueDate.equals(milestone.dueDate) : milestone.dueDate == null;
+        if (dueDate != null ? !dueDate.equals(milestone.dueDate) : milestone.dueDate != null) return false;
+        return description != null ? description.equals(milestone.description) : milestone.description == null;
     }
 
     @Override
@@ -37,6 +40,7 @@ public class Milestone extends ProjectLevelArtifact<Milestone>
         int result = super.hashCode();
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (dueDate != null ? dueDate.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
 
@@ -54,6 +58,14 @@ public class Milestone extends ProjectLevelArtifact<Milestone>
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
