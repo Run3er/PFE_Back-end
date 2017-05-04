@@ -61,6 +61,7 @@ public class ApiController
     @RequestMapping(method = POST, consumes = "application/json", value = {
             "**/entities/{parentResourceId}/projects",
             "**/projects/{parentResourceId}/subProjects",
+            "**/projects/{parentResourceId}/constructionSites",
             "**/subProjects/{parentResourceId}/constructionSites",
 
             "**/projects/{parentResourceId}/actions",
@@ -109,6 +110,7 @@ public class ApiController
     @RequestMapping(method = DELETE, value = {
             "**/entities/{parentResourceId}/projects/{subResourceId}",
             "**/projects/{parentResourceId}/subProjects/{subResourceId}",
+            "**/projects/{parentResourceId}/constructionSites/{subResourceId}",
             "**/subProjects/{parentResourceId}/constructionSites/{subResourceId}",
 
             "**/projects/{parentResourceId}/actions/{subResourceId}",

@@ -33,7 +33,7 @@ public class ResourceAppender
 
     @Transactional
     public List<UUID> append(String parentResourcePath, UUID parentResrcId, String subResourcePath,
-                                 Collection<?> subResources) throws IllegalArgumentException {
+                             Collection<?> subResources) throws IllegalArgumentException {
         List<UUID> appendedResourcesIDs = new ArrayList<>();
 
         switch (parentResourcePath) {
@@ -61,6 +61,10 @@ public class ResourceAppender
                     appendResources(project, SubProject.class, project.getSubProjects(),
                             subResources, appendedResourcesIDs);
                 }
+                else if ("constructionSites".equals(subResourcePath)) {
+                    appendResources(project, ConstructionSite.class, project.getConstructionSites(),
+                            subResources, appendedResourcesIDs);
+                }
                 else appendArtifacts(project, subResourcePath, subResources, appendedResourcesIDs);
                 break;
             case "subProjects":
@@ -71,7 +75,7 @@ public class ResourceAppender
 
                 if ("constructionSites".equals(subResourcePath)) {
                     appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(),
-                                subResources, appendedResourcesIDs);
+                            subResources, appendedResourcesIDs);
                 }
                 else appendArtifacts(subProject, subResourcePath, subResources, appendedResourcesIDs);
                 break;
@@ -126,7 +130,7 @@ public class ResourceAppender
     }
 
     private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType,
-             Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
+                                                                 Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         ObjectMapper mapper = new ObjectMapper();
         for (Object subResource : subResources) {
             U concreteSubResource = null;

@@ -23,6 +23,9 @@ public class Project extends ProjectLevel
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubProject> subProjects = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ConstructionSite> constructionSites = new HashSet<>();
+
     public Project() {
         // no-arg constructor for ORM (due to reflection use)
     }
@@ -37,5 +40,9 @@ public class Project extends ProjectLevel
 
     public Set<SubProject> getSubProjects() {
         return subProjects;
+    }
+
+    public Set<ConstructionSite> getConstructionSites() {
+        return constructionSites;
     }
 }
