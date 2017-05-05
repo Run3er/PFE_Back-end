@@ -98,13 +98,13 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     }
 
     public Resource getSupervisor() {
-        if (supervisor.getType() != ResourceType.HUMAN) {
-            throw new IllegalArgumentException("Supervisor can only be a resource of type " + ResourceType.HUMAN + ".");
-        }
         return supervisor;
     }
 
     public void setSupervisor(Resource supervisor) {
+        if (supervisor.getType() != ResourceType.HUMAN) {
+            throw new IllegalArgumentException("Supervisor can only be a resource of type " + ResourceType.HUMAN + ".");
+        }
         this.supervisor = supervisor;
     }
 
