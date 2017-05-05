@@ -122,16 +122,6 @@ public class Action extends ProjectLevelArtifact<Action>
     }
 
     public void setCreationDate(Date creationDate) {
-        if (closurePlannedDate != null && creationDate.after(closurePlannedDate)) {
-            throw new IllegalArgumentException("Creation date can't be set to later than closure planned date:" +
-                    "\tcreationDate=" + creationDate +
-                    "\n\tclosurePlannedDate=" + closurePlannedDate);
-        }
-        if (closureDate != null && creationDate.after(closureDate)) {
-            throw new IllegalArgumentException("Creation date can't be set to later than closure date:" +
-                    "\tcreationDate=" + creationDate +
-                    "\n\tclosureDate=" + closureDate);
-        }
         this.creationDate = creationDate;
     }
 
@@ -140,11 +130,6 @@ public class Action extends ProjectLevelArtifact<Action>
     }
 
     public void setClosurePlannedDate(Date closurePlannedDate) {
-        if (creationDate != null && closurePlannedDate.after(creationDate)) {
-            throw new IllegalArgumentException("Planned closure date can't be set to earlier than creation date:" +
-                    "\tclosurePlannedDate=" + closurePlannedDate +
-                    "\n\tcreationDate=" + creationDate);
-        }
         this.closurePlannedDate = closurePlannedDate;
     }
 
@@ -153,11 +138,6 @@ public class Action extends ProjectLevelArtifact<Action>
     }
 
     public void setClosureDate(Date closureDate) {
-        if (creationDate != null && closureDate.after(creationDate)) {
-            throw new IllegalArgumentException("Closure date can't be set to earlier than creation date:" +
-                    "\tclosureDate=" + closureDate +
-                    "\n\tcreationDate=" + creationDate);
-        }
         this.closureDate = closureDate;
     }
 

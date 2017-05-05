@@ -1,7 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
 import projMngmntSaaS.domain.entities.enums.ChangeRequestStatus;
-import projMngmntSaaS.domain.entities.enums.PendingIssueStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -116,16 +115,6 @@ public class ChangeRequest extends ProjectLevelArtifact<ChangeRequest>
     }
 
     public void setRequestDate(Date requestDate) {
-        if (decisionPlannedDate != null && requestDate.after(decisionPlannedDate)) {
-            throw new IllegalArgumentException("Request date can't be set to later than decision planned date:" +
-                    "\trequestDate=" + requestDate +
-                    "\n\tdecisionPlannedDate=" + decisionPlannedDate);
-        }
-        if (decisionDate != null && requestDate.after(decisionDate)) {
-            throw new IllegalArgumentException("Request date can't be set to later than decision date:" +
-                    "\trequestDate=" + requestDate +
-                    "\n\tresolutionDate=" + decisionDate);
-        }
         this.requestDate = requestDate;
     }
 
@@ -134,11 +123,6 @@ public class ChangeRequest extends ProjectLevelArtifact<ChangeRequest>
     }
 
     public void setDecisionPlannedDate(Date decisionPlannedDate) {
-        if (requestDate != null && decisionPlannedDate.after(requestDate)) {
-            throw new IllegalArgumentException("Planned decision date can't be set to earlier than request date:" +
-                    "\tdecisionPlannedDate=" + decisionPlannedDate +
-                    "\n\trequestDate=" + requestDate);
-        }
         this.decisionPlannedDate = decisionPlannedDate;
     }
 
@@ -147,11 +131,6 @@ public class ChangeRequest extends ProjectLevelArtifact<ChangeRequest>
     }
 
     public void setDecisionDate(Date decisionDate) {
-        if (requestDate != null && decisionDate.after(requestDate)) {
-            throw new IllegalArgumentException("Decision date can't be set to earlier than request date:" +
-                    "\tdecisionDate=" + decisionDate +
-                    "\n\trequestDate=" + requestDate);
-        }
         this.decisionDate = decisionDate;
     }
 

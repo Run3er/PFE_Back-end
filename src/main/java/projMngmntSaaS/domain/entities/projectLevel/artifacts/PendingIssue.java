@@ -125,16 +125,6 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     }
 
     public void setCreationDate(Date creationDate) {
-        if (resolutionPlannedDate != null && creationDate.after(resolutionPlannedDate)) {
-            throw new IllegalArgumentException("Creation date can't be set to later than resolution planned date:" +
-                    "\tcreationDate=" + creationDate +
-                    "\n\tresolutionPlannedDate=" + resolutionPlannedDate);
-        }
-        if (resolutionDate != null && creationDate.after(resolutionDate)) {
-            throw new IllegalArgumentException("Creation date can't be set to later than resolution date:" +
-                    "\tcreationDate=" + creationDate +
-                    "\n\tresolutionDate=" + resolutionDate);
-        }
         this.creationDate = creationDate;
     }
 
@@ -143,11 +133,6 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     }
 
     public void setResolutionPlannedDate(Date resolutionPlannedDate) {
-        if (creationDate != null && resolutionPlannedDate.after(creationDate)) {
-            throw new IllegalArgumentException("Planned resolution date can't be set to earlier than creation date:" +
-                    "\tresolutionPlannedDate=" + resolutionPlannedDate +
-                    "\n\tcreationDate=" + creationDate);
-        }
         this.resolutionPlannedDate = resolutionPlannedDate;
     }
 
@@ -156,11 +141,6 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     }
 
     public void setResolutionDate(Date resolutionDate) {
-        if (creationDate != null && resolutionPlannedDate.after(creationDate)) {
-            throw new IllegalArgumentException("Resolution date can't be set to earlier than creation date:" +
-                    "\tresolutionDate=" + resolutionDate +
-                    "\n\tcreationDate=" + creationDate);
-        }
         this.resolutionDate = resolutionDate;
     }
 

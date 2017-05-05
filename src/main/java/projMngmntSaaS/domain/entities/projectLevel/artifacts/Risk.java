@@ -148,16 +148,6 @@ public class Risk extends ProjectLevelArtifact<Risk>
     }
 
     public void setDetectionDate(Date detectionDate) {
-        if (qualificationDate != null && detectionDate.after(qualificationDate)) {
-            throw new IllegalArgumentException("Detection date can't be set to later than qualification date:" +
-                    "\tdetectionDate=" + detectionDate +
-                    "\n\tqualificationDate=" + qualificationDate);
-        }
-        if (closureDate != null && detectionDate.after(closureDate)) {
-            throw new IllegalArgumentException("Detection date can't be set to later than closure date:" +
-                    "\tdetectionDate=" + detectionDate +
-                    "\n\tclosureDate=" + closureDate);
-        }
         this.detectionDate = detectionDate;
     }
 
@@ -166,16 +156,6 @@ public class Risk extends ProjectLevelArtifact<Risk>
     }
 
     public void setQualificationDate(Date qualificationDate) {
-        if (detectionDate != null && qualificationDate.before(detectionDate)) {
-            throw new IllegalArgumentException("Qualification date can't be set to earlier than detection date:" +
-                    "\tqualificationDate=" + qualificationDate +
-                    "\n\tdetectionDate=" + detectionDate);
-        }
-        if (closureDate != null && qualificationDate.after(closureDate)) {
-            throw new IllegalArgumentException("Qualification date can't be set to later than closure date:" +
-                    "\tqualificationDate=" + qualificationDate +
-                    "\n\tclosureDate=" + closureDate);
-        }
         this.qualificationDate = qualificationDate;
     }
 
@@ -184,16 +164,6 @@ public class Risk extends ProjectLevelArtifact<Risk>
     }
 
     public void setClosureDate(Date closureDate) {
-        if (detectionDate != null && closureDate.before(detectionDate)) {
-            throw new IllegalArgumentException("Closure date can't be set to earlier than detection date:" +
-                    "\tclosureDate=" + closureDate +
-                    "\n\tdetectionDate=" + detectionDate);
-        }
-        if (qualificationDate != null && closureDate.before(qualificationDate)) {
-            throw new IllegalArgumentException("Closure date can't be set to earlier than qualification date:" +
-                    "\tclosureDate=" + closureDate +
-                    "\n\tqualificationDate=" + qualificationDate);
-        }
         this.closureDate = closureDate;
     }
 
