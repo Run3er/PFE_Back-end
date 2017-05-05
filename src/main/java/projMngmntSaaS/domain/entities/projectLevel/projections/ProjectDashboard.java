@@ -17,7 +17,7 @@ import java.util.Map;
  * Optimized for the dashboard as all its needed data is going to be inline.
  */
 @Projection(name = "dashboard", types = { Project.class })
-public interface ProjectProjectionDashboard
+public interface ProjectDashboard
 {
     String getName();
 
