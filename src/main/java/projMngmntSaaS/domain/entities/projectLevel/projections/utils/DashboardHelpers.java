@@ -2,7 +2,7 @@ package projMngmntSaaS.domain.entities.projectLevel.projections.utils;
 
 import projMngmntSaaS.domain.entities.enums.ActionStatus;
 import projMngmntSaaS.domain.entities.enums.RiskStatus;
-import projMngmntSaaS.domain.entities.projectLevel.SubProject;
+import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Risk;
 
@@ -21,8 +21,8 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class DashboardHelpers
 {
-    public static Collection<Map<String, String>> getSubProjectsAdvancement(Set<SubProject> subProjects) {
-        return subProjects.stream()
+    public static Collection<Map<String, String>> getProjectLevelsAdvancement(Set<ProjectLevel> projectLevels) {
+        return projectLevels.stream()
                 .map(sp -> {
                     HashMap<String, String> sps = new HashMap<>();
                     sps.put("id", sp.getId() + "");
