@@ -14,7 +14,7 @@ import java.util.Set;
  * A project always belongs one to {@link projMngmntSaaS.domain.entities.ProjectsEntity}.
  */
 @Entity
-public class Project extends ProjectLevel
+public class Project extends SubProject
 {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     // Exact field name ('entity') mappedBy ProjectsEntity association
@@ -22,9 +22,6 @@ public class Project extends ProjectLevel
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubProject> subProjects = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ConstructionSite> constructionSites = new HashSet<>();
 
     public Project() {
         // no-arg constructor for ORM (due to reflection use)
@@ -40,9 +37,5 @@ public class Project extends ProjectLevel
 
     public Set<SubProject> getSubProjects() {
         return subProjects;
-    }
-
-    public Set<ConstructionSite> getConstructionSites() {
-        return constructionSites;
     }
 }

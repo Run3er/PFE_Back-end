@@ -10,7 +10,7 @@ import java.util.Set;
  * A sub-project is a sub group of {@link Project} activities.
  */
 @Entity
-public class SubProject extends ProjectLevel
+public class SubProject extends ConstructionSite
 {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ConstructionSite> constructionSites = new HashSet<>();
