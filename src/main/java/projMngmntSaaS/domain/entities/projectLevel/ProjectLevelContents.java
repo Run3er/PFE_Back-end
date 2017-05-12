@@ -21,19 +21,21 @@ public abstract class ProjectLevelContents
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected UUID id;
     
-    protected BigDecimal budgetTotal;
+    protected BigDecimal budgetInitial;
 
-    protected BigDecimal budgetPlanned;
+    protected BigDecimal budgetToConsume;
 
     protected BigDecimal budgetConsumed;
+
+    protected int chargePrevision;
 
     protected int chargeConsumed;
 
     @Column(nullable = false, precision = 3)
-    protected float advancement;
+    protected float advancement = 0;
 
     @Column(nullable = false)
-    protected ProjectLevelStatus status;
+    protected ProjectLevelStatus status = ProjectLevelStatus.GREEN;
 
     @ManyToMany(cascade = CascadeType.ALL)
     protected Set<Action> actions = new HashSet<>();
@@ -61,8 +63,8 @@ public abstract class ProjectLevelContents
     }
 
     public ProjectLevelContents(ProjectLevelContents projectLevelContents) {
-        this.budgetTotal = projectLevelContents.budgetTotal;
-        this.budgetPlanned = projectLevelContents.budgetPlanned;
+        this.budgetInitial = projectLevelContents.budgetInitial;
+        this.budgetToConsume = projectLevelContents.budgetToConsume;
         this.budgetConsumed = projectLevelContents.budgetConsumed;
         this.chargeConsumed = projectLevelContents.chargeConsumed;
         this.advancement = projectLevelContents.advancement;
@@ -76,20 +78,20 @@ public abstract class ProjectLevelContents
         this.milestones = new HashSet<>(projectLevelContents.milestones);
     }
 
-    public BigDecimal getBudgetTotal() {
-        return budgetTotal;
+    public BigDecimal getBudgetInitial() {
+        return budgetInitial;
     }
 
-    public void setBudgetTotal(BigDecimal budgetTotal) {
-        this.budgetTotal = budgetTotal;
+    public void setBudgetInitial(BigDecimal budgetInitial) {
+        this.budgetInitial = budgetInitial;
     }
 
-    public BigDecimal getBudgetPlanned() {
-        return budgetPlanned;
+    public BigDecimal getBudgetToConsume() {
+        return budgetToConsume;
     }
 
-    public void setBudgetPlanned(BigDecimal budgetPlanned) {
-        this.budgetPlanned = budgetPlanned;
+    public void setBudgetToConsume(BigDecimal budgetToConsume) {
+        this.budgetToConsume = budgetToConsume;
     }
 
     public BigDecimal getBudgetConsumed() {
@@ -98,6 +100,14 @@ public abstract class ProjectLevelContents
 
     public void setBudgetConsumed(BigDecimal budgetConsumed) {
         this.budgetConsumed = budgetConsumed;
+    }
+
+    public int getChargePrevision() {
+        return chargePrevision;
+    }
+
+    public void setChargePrevision(int chargePrevision) {
+        this.chargePrevision = chargePrevision;
     }
 
     public int getChargeConsumed() {

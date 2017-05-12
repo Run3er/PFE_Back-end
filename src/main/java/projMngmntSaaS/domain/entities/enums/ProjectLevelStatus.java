@@ -5,7 +5,7 @@ package projMngmntSaaS.domain.entities.enums;
  */
 public enum ProjectLevelStatus
 {
-    BAD,
-    UNCERTAIN,
-    GOOD
+    RED,
+    ORANGE,
+    GREEN
 }
