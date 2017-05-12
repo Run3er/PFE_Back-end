@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import projMngmntSaaS.domain.entities.projectLevel.*;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
+import projMngmntSaaS.domain.entities.projectLevel.artifacts.CommunicationPlan;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.ProjectLevelArtifact;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Resource;
 import projMngmntSaaS.repositories.*;
@@ -38,12 +39,17 @@ public class ProjectFullUpdateArchiver
     private final PendingIssueRepository pendingIssueRepository;
     private final DocumentRepository documentRepository;
     private final ChangeRequestRepository changeRequestRepository;
+    private final CommunicationPlanRepository communicationPlanRepository;
+    private final HumanResourceRepository humanResourceRepository;
+    private final ReunionPlanningRepository reunionPlanningRepository;
+    private final TodoRepository todoRepository;
+    private final WriteupRepository writeupRepository;
 
     @Autowired
     public ProjectFullUpdateArchiver(ProjectRepository projectRepository, RiskRepository riskRepository,
                                      ActionRepository actionRepository, ResourceRepository resourceRepository,
                                      MilestoneRepository milestoneRepository, PendingIssueRepository pendingIssueRepository,
-                                     DocumentRepository documentRepository, ChangeRequestRepository changeRequestRepository) {
+                                     DocumentRepository documentRepository, ChangeRequestRepository changeRequestRepository, CommunicationPlanRepository communicationPlanRepository, HumanResourceRepository humanResourceRepository, ReunionPlanningRepository reunionPlanningRepository, TodoRepository todoRepository, WriteupRepository writeupRepository) {
         this.projectRepository = projectRepository;
         this.riskRepository = riskRepository;
         this.actionRepository = actionRepository;
@@ -52,6 +58,11 @@ public class ProjectFullUpdateArchiver
         this.pendingIssueRepository = pendingIssueRepository;
         this.documentRepository = documentRepository;
         this.changeRequestRepository = changeRequestRepository;
+        this.communicationPlanRepository = communicationPlanRepository;
+        this.humanResourceRepository = humanResourceRepository;
+        this.reunionPlanningRepository = reunionPlanningRepository;
+        this.todoRepository = todoRepository;
+        this.writeupRepository = writeupRepository;
     }
 
     public static String getDescription() {
@@ -73,6 +84,9 @@ public class ProjectFullUpdateArchiver
                 archiveProjectLevelUpdate(constructionSite, updateTime);
             }
         }
+        for (ConstructionSite constructionSite : project.getConstructionSites()) {
+            archiveProjectLevelUpdate(constructionSite, updateTime);
+        }
         projectRepository.save(project);
     }
 
@@ -86,9 +100,15 @@ public class ProjectFullUpdateArchiver
         archiveArtifactCollection(update.getPendingIssues(), projectLevel.getPendingIssues(), pendingIssueRepository);
         archiveArtifactCollection(update.getRisks(), projectLevel.getRisks(), riskRepository);
         archiveArtifactCollection(update.getResources(), projectLevel.getResources(), resourceRepository);
+        archiveArtifactCollection(update.getHumanResources(), projectLevel.getHumanResources(), humanResourceRepository);
+        archiveArtifactCollection(update.getTodos(), projectLevel.getTodos(), todoRepository);
+        archiveArtifactCollection(update.getCommunicationPlans(), projectLevel.getCommunicationPlans(), communicationPlanRepository);
+        archiveArtifactCollection(update.getReunionPlannings(), projectLevel.getReunionPlannings(), reunionPlanningRepository);
+        archiveArtifactCollection(update.getWriteups(), projectLevel.getWriteups(), writeupRepository);
         archiveArtifactCollection(update.getActions(), projectLevel.getActions(), actionRepository);
 
         // Setting each current artifact's dependency to its unarchived version
+
         // Action-resource dependency
         for (Action currentAction : projectLevel.getActions()) {
             for (Resource resource : projectLevel.getResources()) {
@@ -99,14 +119,23 @@ public class ProjectFullUpdateArchiver
                 }
             }
         }
+        // CommunicationPlan-resource dependency
+        for (CommunicationPlan communicationPlan : projectLevel.getCommunicationPlans()) {
+            for (Resource resource : projectLevel.getResources()) {
+                if (communicationPlan.getSupervisor().getReference().equals(resource.getReference())) {
+                    communicationPlan.setSupervisor(resource);
+                    communicationPlanRepository.save(communicationPlan);
+                    break;
+                }
+            }
+        }
 
         // Archive update
         projectLevel.getArchivedUpdates().add(update);
     }
 
     private  <T extends ProjectLevelArtifact<T>> void archiveArtifactCollection(Set<T> updateArtifactCollection,
-                                                                                Set<T> currentArtifactCollection,
-                                                                                CrudRepository<T, UUID> artifactRepository) {
+            Set<T> currentArtifactCollection, CrudRepository<T, UUID> artifactRepository) {
         // Temporary collection to avoid ConcurrentModificationException
         Set<T> artifactCollection = new HashSet<>(updateArtifactCollection);
 

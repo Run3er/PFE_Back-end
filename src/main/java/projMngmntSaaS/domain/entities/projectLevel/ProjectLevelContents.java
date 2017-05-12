@@ -58,6 +58,21 @@ public abstract class ProjectLevelContents
     @ManyToMany(cascade = CascadeType.ALL)
     protected Set<Milestone> milestones = new HashSet<>();
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    protected Set<Todo> todos = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    protected Set<HumanResource> humanResources = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    protected Set<CommunicationPlan> communicationPlans = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    protected Set<Writeup> writeups = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    protected Set<ReunionPlanning> reunionPlannings = new HashSet<>();
+
     public ProjectLevelContents() {
         // explicit, public, no-arg constructor (making it always available to derived classes)
     }
@@ -76,6 +91,11 @@ public abstract class ProjectLevelContents
         this.resources = new HashSet<>(projectLevelContents.resources);
         this.documents = new HashSet<>(projectLevelContents.documents);
         this.milestones = new HashSet<>(projectLevelContents.milestones);
+        this.todos = new HashSet<>(projectLevelContents.todos);
+        this.humanResources = new HashSet<>(projectLevelContents.humanResources);
+        this.communicationPlans = new HashSet<>(projectLevelContents.communicationPlans);
+        this.writeups = new HashSet<>(projectLevelContents.writeups);
+        this.reunionPlannings = new HashSet<>(projectLevelContents.reunionPlannings);
     }
 
     public BigDecimal getBudgetInitial() {
@@ -160,5 +180,25 @@ public abstract class ProjectLevelContents
 
     public Set<Milestone> getMilestones() {
         return milestones;
+    }
+
+    public Set<Todo> getTodos() {
+        return todos;
+    }
+
+    public Set<HumanResource> getHumanResources() {
+        return humanResources;
+    }
+
+    public Set<CommunicationPlan> getCommunicationPlans() {
+        return communicationPlans;
+    }
+
+    public Set<Writeup> getWriteups() {
+        return writeups;
+    }
+
+    public Set<ReunionPlanning> getReunionPlannings() {
+        return reunionPlannings;
     }
 }

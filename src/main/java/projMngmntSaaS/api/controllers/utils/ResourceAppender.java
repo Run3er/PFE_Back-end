@@ -32,8 +32,7 @@ public class ResourceAppender
 
 
     @Transactional
-    public List<UUID> append(String parentResourcePath, UUID parentResrcId, String subResourcePath,
-                             Collection<?> subResources) throws IllegalArgumentException {
+    public List<UUID> append(String parentResourcePath, UUID parentResrcId, String subResourcePath, Collection<?> subResources) throws IllegalArgumentException {
         List<UUID> appendedResourcesIDs = new ArrayList<>();
 
         switch (parentResourcePath) {
@@ -124,13 +123,32 @@ public class ResourceAppender
                 appendResources(parentResrc, Milestone.class, parentResrc.getMilestones(),
                         subResources, appendedResourcesIDs);
                 break;
+            case "todos":
+                appendResources(parentResrc, Todo.class, parentResrc.getTodos(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "reunionPlannings":
+                appendResources(parentResrc, ReunionPlanning.class, parentResrc.getReunionPlannings(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "communicationPlans":
+                appendResources(parentResrc, CommunicationPlan.class, parentResrc.getCommunicationPlans(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "humanResources":
+                appendResources(parentResrc, HumanResource.class, parentResrc.getHumanResources(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "writeups":
+                appendResources(parentResrc, Writeup.class, parentResrc.getWriteups(),
+                        subResources, appendedResourcesIDs);
+                break;
             default:
                 throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
         }
     }
 
-    private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType,
-                                                                 Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
+    private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType, Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         ObjectMapper mapper = new ObjectMapper();
         for (Object subResource : subResources) {
             U concreteSubResource = null;

@@ -113,6 +113,26 @@ public class ResourceDeleter
                 Milestone milestone = entityManager.find(Milestone.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getMilestones(), milestone);
                 break;
+            case "todos":
+                Todo todo = entityManager.find(Todo.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getTodos(), todo);
+                break;
+            case "reunionPlannings":
+                ReunionPlanning reunionPlanning = entityManager.find(ReunionPlanning.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getReunionPlannings(), reunionPlanning);
+                break;
+            case "communicationPlans":
+                CommunicationPlan communicationPlan = entityManager.find(CommunicationPlan.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getCommunicationPlans(), communicationPlan);
+                break;
+            case "humanResources":
+                HumanResource humanResource = entityManager.find(HumanResource.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getHumanResources(), humanResource);
+                break;
+            case "writeups":
+                Writeup writeup = entityManager.find(Writeup.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getWriteups(), writeup);
+                break;
             default:
                 throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
         }

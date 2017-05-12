@@ -43,7 +43,7 @@ public class AppConfiguration
 //                project.getMilestones().add(milestone);
 //                //  update actions #1
 //                Action action = new Action();
-//                action.setDescription("important task #1");
+//                action.setName("important task #1");
 //                action.setPriority(2);
 //                action.setCreationDate(new Date());
 //                action.setStatus(ActionStatus.ONGOING);
@@ -62,7 +62,7 @@ public class AppConfiguration
 //                project.getArchivedUpdates().add(updateOld);
 //                //  update actions #2
 //                Action actionTwo = new Action();
-//                actionTwo.setDescription("heavy work #2");
+//                actionTwo.setName("heavy work #2");
 //                actionTwo.setPriority(2);
 //                actionTwo.setCreationDate(new Date());
 //                actionTwo.setStatus(ActionStatus.STANDBY);
@@ -76,12 +76,12 @@ public class AppConfiguration
 //                project.getActions().add(actionTwo);
 //                //  update risks
 //                Risk risk = new Risk();
-//                risk.setDescription("risky state #15");
+//                risk.setName("risky state #15");
 //                risk.setProbability(3);
 //                risk.setImpact(4);
 //                risk.setActionPlan("Lessen impact by doing sth.");
 //                risk.setStatus(RiskStatus.ACTION_PLAN_ONGOING);
-//                risk.setDetectionDate(new Date());
+//                risk.setDate(new Date());
 //                risk.setQualificationDate(new Date());
 //                project.getRisks().add(risk);
 //                // sub-projects

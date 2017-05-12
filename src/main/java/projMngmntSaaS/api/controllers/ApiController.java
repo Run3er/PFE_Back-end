@@ -35,6 +35,70 @@ public class ApiController
     private final ResourceAppender resourceAppender;
     private final ResourceDeleter resourceDeleter;
 
+    // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
+    // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
+    @RequestMapping(method = POST, consumes = "application/json", value = {
+            "**/entities/{parentResourceId}/projects",
+            "**/projects/{parentResourceId}/subProjects",
+            "**/projects/{parentResourceId}/constructionSites",
+            "**/subProjects/{parentResourceId}/constructionSites",
+
+            "**/projects/{parentResourceId}/actions",
+            "**/projects/{parentResourceId}/risks",
+            "**/projects/{parentResourceId}/changeRequests",
+            "**/projects/{parentResourceId}/pendingIssues",
+            "**/projects/{parentResourceId}/resources",
+            "**/projects/{parentResourceId}/documents",
+            "**/projects/{parentResourceId}/milestones",
+            "**/projects/{parentResourceId}/todos",
+            "**/projects/{parentResourceId}/reunionPlannings",
+            "**/projects/{parentResourceId}/communicationPlans",
+            "**/projects/{parentResourceId}/humanResources",
+            "**/projects/{parentResourceId}/writeups",
+
+            "**/subProjects/{parentResourceId}/actions",
+            "**/subProjects/{parentResourceId}/risks",
+            "**/subProjects/{parentResourceId}/changeRequests",
+            "**/subProjects/{parentResourceId}/pendingIssues",
+            "**/subProjects/{parentResourceId}/resources",
+            "**/subProjects/{parentResourceId}/documents",
+            "**/subProjects/{parentResourceId}/milestones",
+            "**/subProjects/{parentResourceId}/todos",
+            "**/subProjects/{parentResourceId}/reunionPlannings",
+            "**/subProjects/{parentResourceId}/communicationPlans",
+            "**/subProjects/{parentResourceId}/humanResources",
+            "**/subProjects/{parentResourceId}/writeups",
+
+            "**/constructionSites/{parentResourceId}/actions",
+            "**/constructionSites/{parentResourceId}/risks",
+            "**/constructionSites/{parentResourceId}/changeRequests",
+            "**/constructionSites/{parentResourceId}/pendingIssues",
+            "**/constructionSites/{parentResourceId}/resources",
+            "**/constructionSites/{parentResourceId}/documents",
+            "**/constructionSites/{parentResourceId}/milestones",
+            "**/constructionSites/{parentResourceId}/todos",
+            "**/constructionSites/{parentResourceId}/reunionPlannings",
+            "**/constructionSites/{parentResourceId}/communicationPlans",
+            "**/constructionSites/{parentResourceId}/humanResources",
+            "**/constructionSites/{parentResourceId}/writeups"
+    })
+    public ResponseEntity<?> appendSubResources(@PathVariable UUID parentResourceId, HttpServletRequest request,
+                                                @RequestBody Collection<Object> subResources) {
+        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String[] UriParts = restOfTheUri.split("/");
+        String subResourcePath = UriParts[UriParts.length - 1];
+        String parentResourcePath = UriParts[UriParts.length - 3];
+
+        List<UUID> appendedUuids;
+        try {
+            appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
+            return new ResponseEntity<>(appendedUuids,  HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Autowired
     public ApiController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
                          ResourceAppender resourceAppender, ResourceDeleter resourceDeleter) {
@@ -58,55 +122,6 @@ public class ApiController
 
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
     // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
-    @RequestMapping(method = POST, consumes = "application/json", value = {
-            "**/entities/{parentResourceId}/projects",
-            "**/projects/{parentResourceId}/subProjects",
-            "**/projects/{parentResourceId}/constructionSites",
-            "**/subProjects/{parentResourceId}/constructionSites",
-
-            "**/projects/{parentResourceId}/actions",
-            "**/projects/{parentResourceId}/risks",
-            "**/projects/{parentResourceId}/changeRequests",
-            "**/projects/{parentResourceId}/pendingIssues",
-            "**/projects/{parentResourceId}/resources",
-            "**/projects/{parentResourceId}/documents",
-            "**/projects/{parentResourceId}/milestones",
-
-            "**/subProjects/{parentResourceId}/actions",
-            "**/subProjects/{parentResourceId}/risks",
-            "**/subProjects/{parentResourceId}/changeRequests",
-            "**/subProjects/{parentResourceId}/pendingIssues",
-            "**/subProjects/{parentResourceId}/resources",
-            "**/subProjects/{parentResourceId}/documents",
-            "**/subProjects/{parentResourceId}/milestones",
-
-            "**/constructionSites/{parentResourceId}/actions",
-            "**/constructionSites/{parentResourceId}/risks",
-            "**/constructionSites/{parentResourceId}/changeRequests",
-            "**/constructionSites/{parentResourceId}/pendingIssues",
-            "**/constructionSites/{parentResourceId}/resources",
-            "**/constructionSites/{parentResourceId}/documents",
-            "**/constructionSites/{parentResourceId}/milestones"
-    })
-    public ResponseEntity<?> appendSubResources(@PathVariable UUID parentResourceId, HttpServletRequest request,
-                                                @RequestBody Collection<Object> subResources) {
-        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        String[] UriParts = restOfTheUri.split("/");
-        String subResourcePath = UriParts[UriParts.length - 1];
-        String parentResourcePath = UriParts[UriParts.length - 3];
-
-        List<UUID> appendedUuids;
-        try {
-            appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
-            return new ResponseEntity<>(appendedUuids,  HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
-    // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
     @RequestMapping(method = DELETE, value = {
             "**/entities/{parentResourceId}/projects/{subResourceId}",
             "**/projects/{parentResourceId}/subProjects/{subResourceId}",
@@ -120,6 +135,11 @@ public class ApiController
             "**/projects/{parentResourceId}/resources/{subResourceId}",
             "**/projects/{parentResourceId}/documents/{subResourceId}",
             "**/projects/{parentResourceId}/milestones/{subResourceId}",
+            "**/projects/{parentResourceId}/todos/{subResourceId}",
+            "**/projects/{parentResourceId}/reunionPlannings/{subResourceId}",
+            "**/projects/{parentResourceId}/communicationPlans/{subResourceId}",
+            "**/projects/{parentResourceId}/humanResources/{subResourceId}",
+            "**/projects/{parentResourceId}/writeups/{subResourceId}",
 
             "**/subProjects/{parentResourceId}/actions/{subResourceId}",
             "**/subProjects/{parentResourceId}/risks/{subResourceId}",
@@ -128,6 +148,11 @@ public class ApiController
             "**/subProjects/{parentResourceId}/resources/{subResourceId}",
             "**/subProjects/{parentResourceId}/documents/{subResourceId}",
             "**/subProjects/{parentResourceId}/milestones/{subResourceId}",
+            "**/subProjects/{parentResourceId}/todos/{subResourceId}",
+            "**/subProjects/{parentResourceId}/reunionPlannings/{subResourceId}",
+            "**/subProjects/{parentResourceId}/communicationPlans/{subResourceId}",
+            "**/subProjects/{parentResourceId}/humanResources/{subResourceId}",
+            "**/subProjects/{parentResourceId}/writeups/{subResourceId}",
 
             "**/constructionSites/{parentResourceId}/actions/{subResourceId}",
             "**/constructionSites/{parentResourceId}/risks/{subResourceId}",
@@ -135,7 +160,12 @@ public class ApiController
             "**/constructionSites/{parentResourceId}/pendingIssues/{subResourceId}",
             "**/constructionSites/{parentResourceId}/resources/{subResourceId}",
             "**/constructionSites/{parentResourceId}/documents/{subResourceId}",
-            "**/constructionSites/{parentResourceId}/milestones/{subResourceId}"
+            "**/constructionSites/{parentResourceId}/milestones/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/todos/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/reunionPlannings/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/communicationPlans/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/humanResources/{subResourceId}",
+            "**/constructionSites/{parentResourceId}/writeups/{subResourceId}"
     })
     public ResponseEntity<?> deleteSubResources(@PathVariable UUID parentResourceId, @PathVariable UUID subResourceId,
                                                 HttpServletRequest request) {
