@@ -2,7 +2,6 @@ package projMngmntSaaS.domain.entities.projectLevel.projections;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
-import projMngmntSaaS.domain.entities.enums.ActionStatus;
 import projMngmntSaaS.domain.entities.enums.ProjectLevelStatus;
 import projMngmntSaaS.domain.entities.enums.RiskStatus;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
@@ -21,6 +20,7 @@ public interface SubProjectDashboard
 {
     String getName();
 
+    @Value("#{(target.budgetToConsume + target.budgetConsumed) == 0 ? 0 : (target.budgetConsumed / (target.budgetToConsume + target.budgetConsumed) * 100)}")
     BigDecimal getBudgetConsumed();
 
     int getChargeConsumed();
@@ -32,8 +32,8 @@ public interface SubProjectDashboard
     @Value("#{target.milestones}")
     Collection<Milestone> getMilestones();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getActionStatusesCount(target.actions)}")
-    Map<ActionStatus, Long> getActionStatusesCount();
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getActionsOngoingInTimeOrNotCount(target.actions)}")
+    Map<Boolean, Long> getActionsOngoingInTimeOrNotCount();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getRiskStatusesCount(target.risks)}")
     Map<RiskStatus, Long> getRiskStatusesCount();

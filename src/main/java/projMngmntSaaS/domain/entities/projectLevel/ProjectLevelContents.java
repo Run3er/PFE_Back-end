@@ -21,15 +21,15 @@ public abstract class ProjectLevelContents
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected UUID id;
     
-    protected BigDecimal budgetInitial;
+    protected BigDecimal budgetInitial = new BigDecimal(0);
 
-    protected BigDecimal budgetToConsume;
+    protected BigDecimal budgetToConsume = new BigDecimal(0);
 
-    protected BigDecimal budgetConsumed;
+    protected BigDecimal budgetConsumed = new BigDecimal(0);
 
-    protected int chargePrevision;
+    protected BigDecimal chargePrevision = new BigDecimal(0);
 
-    protected int chargeConsumed;
+    protected BigDecimal chargeConsumed = new BigDecimal(0);
 
     @Column(nullable = false, precision = 3)
     protected float advancement = 0;
@@ -122,19 +122,19 @@ public abstract class ProjectLevelContents
         this.budgetConsumed = budgetConsumed;
     }
 
-    public int getChargePrevision() {
+    public BigDecimal getChargePrevision() {
         return chargePrevision;
     }
 
-    public void setChargePrevision(int chargePrevision) {
+    public void setChargePrevision(BigDecimal chargePrevision) {
         this.chargePrevision = chargePrevision;
     }
 
-    public int getChargeConsumed() {
+    public BigDecimal getChargeConsumed() {
         return chargeConsumed;
     }
 
-    public void setChargeConsumed(int chargeConsumed) {
+    public void setChargeConsumed(BigDecimal chargeConsumed) {
         this.chargeConsumed = chargeConsumed;
     }
 

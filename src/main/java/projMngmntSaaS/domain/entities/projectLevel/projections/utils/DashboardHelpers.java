@@ -6,10 +6,8 @@ import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Risk;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.counting;
@@ -33,10 +31,12 @@ public class DashboardHelpers
                 .collect(Collectors.toList());
     }
 
-    public static Map<ActionStatus, Long> getActionStatusesCount(Set<Action> actions) {
+    public static Map<Boolean, Long> getActionsOngoingInTimeOrNotCount(Set<Action> actions) {
         return actions
                 .stream()
-                .collect(groupingBy(Action::getStatus, counting()));
+                .filter(action -> action.getStatus().equals(ActionStatus.ONGOING))
+                .map(action -> (action.getClosurePlannedDate().getTime() - new Date().getTime()) <= 0)
+                .collect(groupingBy(Function.identity(), counting()));
     }
 
     public static Map<RiskStatus, Long> getRiskStatusesCount(Set<Risk> risks) {

@@ -1,7 +1,18 @@
 package projMngmntSaaS;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import projMngmntSaaS.domain.entities.enums.ResourceType;
+import projMngmntSaaS.domain.entities.projectLevel.artifacts.Resource;
+import projMngmntSaaS.repositories.ResourceRepository;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Configuration for Spring Boot.
@@ -10,25 +21,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AppConfiguration
 {
-//    @Autowired
-//    @Qualifier("transactionManager")
-//    private PlatformTransactionManager txManager;
+    @Autowired
+    @Qualifier("transactionManager")
+    private PlatformTransactionManager txManager;
 //
 //    @Autowired
 //    private ProjectRepository projectRepository;
-//    @Autowired
-//    private ResourceRepository resourceRepository;
+    @Autowired
+    private ResourceRepository resourceRepository;
 //
     public static void main(String[] args) {
         SpringApplication.run(AppConfiguration.class, args);
     }
 //
-//    @PostConstruct
-//    public void init() {
-//        TransactionTemplate tmpl = new TransactionTemplate(txManager);
-//        tmpl.execute(new TransactionCallbackWithoutResult() {
-//            @Override
-//            protected void doInTransactionWithoutResult(TransactionStatus status) {
+    @PostConstruct
+    public void init() {
+        TransactionTemplate tmpl = new TransactionTemplate(txManager);
+        tmpl.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
 //                // Create project
 //                Project project = new Project();
 //                // name
@@ -48,10 +59,10 @@ public class AppConfiguration
 //                action.setCreationDate(new Date());
 //                action.setStatus(ActionStatus.ONGOING);
 //                action.setClosurePlannedDate(new Date());
-//                Resource resource = new Resource();
-//                resource.setName("Ali");
-//                resource.setType(ResourceType.HUMAN);
-//                resourceRepository.save(resource);
+                Resource resource = new Resource();
+                resource.setName("Ali");
+                resource.setType(ResourceType.HUMAN);
+                resourceRepository.save(resource);
 //                action.setSupervisor(resource);
 //                project.getResources().add(resource);
 //                project.getActions().add(action);
@@ -67,10 +78,10 @@ public class AppConfiguration
 //                actionTwo.setCreationDate(new Date());
 //                actionTwo.setStatus(ActionStatus.STANDBY);
 //                actionTwo.setClosurePlannedDate(new Date());
-//                Resource resourceTwo = new Resource();
-//                resourceTwo.setName("Fatma");
-//                resourceTwo.setType(ResourceType.HUMAN);
-//                resourceRepository.save(resourceTwo);
+                Resource resourceTwo = new Resource();
+                resourceTwo.setName("Fatma");
+                resourceTwo.setType(ResourceType.HUMAN);
+                resourceRepository.save(resourceTwo);
 //                project.getResources().add(resourceTwo);
 //                actionTwo.setSupervisor(resourceTwo);
 //                project.getActions().add(actionTwo);
@@ -96,7 +107,7 @@ public class AppConfiguration
 ////                projectsEntity = projectsEntityRepository.save(projectsEntity);
 //                project.setEntity(projectsEntity);
 //                projectRepository.save(project);
-//            }
-//        });
-//    }
+            }
+        });
+    }
 }
