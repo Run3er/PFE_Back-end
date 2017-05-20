@@ -22,7 +22,7 @@ public class User
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, length = 10)
+    @Column(unique = true, nullable = false, length = 10)
     private String login;
 
     @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
@@ -42,6 +42,10 @@ public class User
 
     public User() {
         // no-arg constructor for ORM (because of reflection use)
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getLogin() {

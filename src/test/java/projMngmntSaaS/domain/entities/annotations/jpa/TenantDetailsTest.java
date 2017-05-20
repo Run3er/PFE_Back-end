@@ -2,7 +2,7 @@ package projMngmntSaaS.domain.entities.annotations.jpa;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import projMngmntSaaS.domain.entities.Tenant;
+import projMngmntSaaS.domain.entities.TenantDetails;
 
 import javax.persistence.*;
 import java.lang.reflect.Field;
@@ -13,11 +13,11 @@ import java.util.Map;
 import static projMngmntSaaS.domain.entities.annotations.testUtils.AssertAnnotations.assertAnnotation;
 
 /**
- * Validating specific JPA annotations in {@link Tenant}.
+ * Validating specific JPA annotations in {@link TenantDetails}.
  */
-public class TenantTest
+public class TenantDetailsTest
 {
-    private static final Class<Tenant> CLASS = Tenant.class;
+    private static final Class<TenantDetails> CLASS = TenantDetails.class;
     private static Field id;
     private static Field name;
     private static Field email;

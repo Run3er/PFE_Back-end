@@ -7,20 +7,23 @@ import java.util.UUID;
  * This contains a client's organization core details.
  */
 @Entity
-public class Tenant
+public class TenantDetails
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @Column(nullable = false, length = 100)
     private String name;
+
     @Column(nullable = false, length = 254)
     private String email;
+
     @Column(length = 2000)
     private String websiteUrl;
 
 
-    public Tenant() {
+    public TenantDetails() {
         // no-arg constructor for ORM (due to reflection use)
     }
 

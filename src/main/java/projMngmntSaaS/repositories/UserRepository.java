@@ -9,4 +9,6 @@ import projMngmntSaaS.repositories.general.EntitiesRepository;
 public interface UserRepository extends EntitiesRepository<User>
 {
     // Registering repository implementation automatically via Spring Data Rest
+
+    User findUserByLogin(String login);
 }

@@ -28,12 +28,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * API controller for customizing Spring Data REST endpoints.
  */
 @RepositoryRestController
-public class ApiController
+public class NestedResourceExtensionController
 {
     private final ProjectRepository projectRepository;
     private final ProjectFullUpdateArchiver projectFullUpdateArchiver;
     private final ResourceAppender resourceAppender;
     private final ResourceDeleter resourceDeleter;
+
+    @Autowired
+    public NestedResourceExtensionController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
+                                             ResourceAppender resourceAppender, ResourceDeleter resourceDeleter) {
+        this.projectRepository = projectRepository;
+        this.projectFullUpdateArchiver = projectFullUpdateArchiver;
+        this.resourceAppender = resourceAppender;
+        this.resourceDeleter = resourceDeleter;
+    }
 
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
     // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
@@ -97,15 +106,6 @@ public class ApiController
             e.printStackTrace();
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @Autowired
-    public ApiController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
-                         ResourceAppender resourceAppender, ResourceDeleter resourceDeleter) {
-        this.projectRepository = projectRepository;
-        this.projectFullUpdateArchiver = projectFullUpdateArchiver;
-        this.resourceAppender = resourceAppender;
-        this.resourceDeleter = resourceDeleter;
     }
 
     @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
