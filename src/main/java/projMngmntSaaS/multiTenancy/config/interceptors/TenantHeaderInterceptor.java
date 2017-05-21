@@ -10,6 +10,8 @@ import projMngmntSaaS.multiTenancy.config.TenantUserContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -48,6 +50,32 @@ public class TenantHeaderInterceptor extends HandlerInterceptorAdapter
             response.getWriter().write("{\"error\": \"Invalid JWT token\"}");
             response.getWriter().flush();
             return false;
+        }
+
+        Date expirationTime = claimsJws.getBody().getExpiration();
+        if (expirationTime != null) {
+            Date currentTime = new Date();
+            if (expirationTime.before(currentTime)) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write("{\"error\": \"Expired JWT token\"}");
+                response.getWriter().flush();
+                return false;
+            } else {
+                // Refresh token expiry date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentTime);
+                calendar.add(Calendar.MINUTE, 30);
+                claimsJws.getBody().setExpiration(calendar.getTime());
+
+                String jwt = Jwts.builder()
+                        .setClaims(claimsJws.getBody())
+                        .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                        .compact();
+
+                // Register refreshed JWT (attach to response to current request)
+                response.addHeader(AUTH_HEADER, BEARER_SCHEME_PREFIX + jwt);
+            }
         }
 
         UUID userId = UUID.fromString(claimsJws.getBody().get("userId", String.class));

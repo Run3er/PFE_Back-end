@@ -7,6 +7,7 @@ public class LoginCredentials
 {
     private String user;
     private String password;
+    private Boolean persistent;
 
     public String getUser() {
         return user;
@@ -22,5 +23,13 @@ public class LoginCredentials
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getPersistent() {
+        return persistent;
+    }
+
+    public void setPersistent(Boolean persistent) {
+        this.persistent = persistent;
     }
 }

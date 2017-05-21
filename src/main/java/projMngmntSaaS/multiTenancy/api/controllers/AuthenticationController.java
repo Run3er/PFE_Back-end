@@ -17,13 +17,14 @@ import projMngmntSaaS.multiTenancy.config.TenantContext;
 import projMngmntSaaS.repositories.UserRepository;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * API controller for authenticating a tenant's user by granting him an access token.<br>
- * Note: Logout is done client-side, by deleting the access token.
+ * API controller for authenticating a tenant's user by granting him an access token.
  */
 @RestController
 public class AuthenticationController
@@ -32,6 +33,7 @@ public class AuthenticationController
     private static final String JWT_SUBJECT = "api_access_token";
     //  @Value("${jwt.secret}") // TODO
     private static String JWT_SECRET = "43d44eae-cd10-4ffb-97e1-c3e189119659";
+    private static int JWT_DEFAULT_EXPIRATION_MINUTES = 30;
 
     private final UserRepository userRepository;
 
@@ -59,6 +61,13 @@ public class AuthenticationController
         Claims claims = Jwts.claims().setSubject(JWT_SUBJECT);
         claims.put("tenantId", TenantContext.getCurrentTenant());
         claims.put("userId", user.getId() + "");
+        // Token expiry date
+        if (!loginCredentials.getPersistent()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.MINUTE, JWT_DEFAULT_EXPIRATION_MINUTES);
+            claims.setExpiration(calendar.getTime());
+        }
 
         String jwt = Jwts.builder()
                 .setClaims(claims)
