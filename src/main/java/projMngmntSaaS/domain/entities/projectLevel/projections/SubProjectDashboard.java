@@ -20,10 +20,17 @@ public interface SubProjectDashboard
 {
     String getName();
 
-    @Value("#{(target.budgetToConsume + target.budgetConsumed) == 0 ? 0 : (target.budgetConsumed / (target.budgetToConsume + target.budgetConsumed) * 100)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetConsumedPercentage(target)}")
     BigDecimal getBudgetConsumed();
 
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetPrevisionGapPercentage(target)}")
+    BigDecimal getBudgetPrevisionGap();
+
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargeConsumedPercentage(target)}")
     BigDecimal getChargeConsumed();
+
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargePrevisionGapPercentage(target)}")
+    BigDecimal getChargePrevisionGap();
 
     int getAdvancement();
 
