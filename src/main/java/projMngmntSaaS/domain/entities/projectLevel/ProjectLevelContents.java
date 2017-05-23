@@ -20,19 +20,21 @@ public abstract class ProjectLevelContents
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected UUID id;
-    
+
     protected BigDecimal budgetInitial = new BigDecimal(0);
 
     protected BigDecimal budgetToConsume = new BigDecimal(0);
 
     protected BigDecimal budgetConsumed = new BigDecimal(0);
 
+    @Column(precision = 10)
     protected BigDecimal chargePrevision = new BigDecimal(0);
 
+    @Column(precision = 10)
     protected BigDecimal chargeConsumed = new BigDecimal(0);
 
     @Column(nullable = false, precision = 3)
-    protected float advancement = 0;
+    protected int advancement = 0;
 
     @Column(nullable = false)
     protected ProjectLevelStatus status = ProjectLevelStatus.GREEN;
@@ -138,11 +140,14 @@ public abstract class ProjectLevelContents
         this.chargeConsumed = chargeConsumed;
     }
 
-    public float getAdvancement() {
+    public int getAdvancement() {
         return advancement;
     }
 
-    public void setAdvancement(float advancement) {
+    public void setAdvancement(int advancement) {
+        if (advancement > 100) {
+            throw new IllegalArgumentException("Advancement can't be higher than 100 %");
+        }
         this.advancement = advancement;
     }
 

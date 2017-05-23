@@ -2,10 +2,7 @@ package projMngmntSaaS.multiTenancy.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -18,7 +15,7 @@ public class Tenant
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-//    @Column(unique = true, nullable = false, length = 100)
+    @Column(unique = true, nullable = false, length = 100)
     private String pseudo;
 
     public Tenant() {

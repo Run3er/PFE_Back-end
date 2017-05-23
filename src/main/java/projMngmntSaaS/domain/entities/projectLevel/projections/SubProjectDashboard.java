@@ -23,9 +23,9 @@ public interface SubProjectDashboard
     @Value("#{(target.budgetToConsume + target.budgetConsumed) == 0 ? 0 : (target.budgetConsumed / (target.budgetToConsume + target.budgetConsumed) * 100)}")
     BigDecimal getBudgetConsumed();
 
-    int getChargeConsumed();
+    BigDecimal getChargeConsumed();
 
-    float getAdvancement();
+    int getAdvancement();
 
     ProjectLevelStatus getStatus();
 

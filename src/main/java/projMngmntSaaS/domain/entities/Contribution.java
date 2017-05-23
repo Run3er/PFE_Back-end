@@ -1,7 +1,7 @@
 package projMngmntSaaS.domain.entities;
 
 
-import projMngmntSaaS.domain.entities.enums.ProjectRole;
+import projMngmntSaaS.domain.entities.enums.ContributorRole;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 
 import javax.persistence.*;
@@ -29,7 +29,7 @@ public class Contribution
     private Project project;
 
     @Column(nullable = false, name = "role")
-    private ProjectRole role;
+    private ContributorRole role;
 
     @ManyToOne(optional = false)
     private ContributorOrganization organization;
@@ -54,11 +54,11 @@ public class Contribution
         this.project = project;
     }
 
-    public ProjectRole getRole() {
+    public ContributorRole getRole() {
         return role;
     }
 
-    public void setRole(ProjectRole role) {
+    public void setRole(ContributorRole role) {
         this.role = role;
     }
 

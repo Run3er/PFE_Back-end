@@ -23,7 +23,7 @@ public class TenantDetailsValidator implements Validator
         TenantDetails tenantDetails = (TenantDetails) target;
 
         // Validate presence of mandatory fields
-        if (InputValidation.isEmpty(tenantDetails.getName())) {
+        if (InputValidation.isEmpty(tenantDetails.getFullName())) {
             errors.rejectValue("name", "field.empty");
         }
         if (InputValidation.isEmpty(tenantDetails.getEmail())) {

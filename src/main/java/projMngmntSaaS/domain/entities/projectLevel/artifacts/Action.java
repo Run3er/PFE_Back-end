@@ -24,6 +24,9 @@ public class Action extends ProjectLevelArtifact<Action>
     @Column(nullable = false)
     private ActionStatus status;
 
+    @Column(nullable = false, precision = 3)
+    private int advancement = 0;
+
     @ManyToOne(optional = false)
     private Resource supervisor;
 
@@ -52,6 +55,7 @@ public class Action extends ProjectLevelArtifact<Action>
 
         Action action = (Action) o;
 
+        if (advancement != action.advancement) return false;
         if (priority != action.priority) return false;
         if (description != null ? !description.equals(action.description) : action.description != null) return false;
         if (status != action.status) return false;
@@ -69,6 +73,7 @@ public class Action extends ProjectLevelArtifact<Action>
         int result = super.hashCode();
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + advancement;
         result = 31 * result + (supervisor != null ? supervisor.hashCode() : 0);
         result = 31 * result + priority;
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
@@ -92,6 +97,17 @@ public class Action extends ProjectLevelArtifact<Action>
 
     public void setStatus(ActionStatus status) {
         this.status = status;
+    }
+
+    public int getAdvancement() {
+        return advancement;
+    }
+
+    public void setAdvancement(int advancement) {
+        if (advancement > 100) {
+            throw new IllegalArgumentException("Advancement can't be higher than 100 %");
+        }
+        this.advancement = advancement;
     }
 
     public Resource getSupervisor() {
@@ -156,6 +172,7 @@ public class Action extends ProjectLevelArtifact<Action>
         shallowCloneRootsInto(clone);
         clone.description = description;
         clone.status = status;
+        clone.advancement = advancement;
         clone.supervisor = supervisor;
         clone.priority = priority;
         clone.creationDate = creationDate;

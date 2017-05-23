@@ -46,7 +46,7 @@ public class AuthenticationController
     @RequestMapping(method = POST, consumes = "application/json", value = "/tenants/{id}/login")
     public ResponseEntity<?> login(@RequestBody LoginCredentials loginCredentials) {
         // Find user
-        User user = userRepository.findUserByLogin(loginCredentials.getUser());
+        User user = userRepository.findByLogin(loginCredentials.getUser());
         if (user == null) {
             return new ResponseEntity<>(Collections.singletonMap("error", "LOGIN INVALID"), HttpStatus.UNAUTHORIZED);
         }

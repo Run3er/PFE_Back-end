@@ -25,6 +25,8 @@ public interface InlineAction
 
     int getPriority();
 
+    int getAdvancement();
+
     Date getCreationDate();
 
     Date getClosurePlannedDate();

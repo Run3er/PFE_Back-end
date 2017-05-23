@@ -2,6 +2,7 @@ package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.util.Date;
 
 /**
  * TODO: description
@@ -14,6 +15,9 @@ public class Todo extends ProjectLevelArtifact<Todo>
 
     @Column(nullable = false)
     private int charge;
+
+    @Column(nullable = false)
+    private Date estimationDate;
 
     public Todo() {
         // no-arg constructor for ORM (due to reflection use)
@@ -28,7 +32,8 @@ public class Todo extends ProjectLevelArtifact<Todo>
         Todo todo = (Todo) o;
 
         if (charge != todo.charge) return false;
-        return description != null ? description.equals(todo.description) : todo.description == null;
+        if (description != null ? !description.equals(todo.description) : todo.description != null) return false;
+        return estimationDate != null ? estimationDate.equals(todo.estimationDate) : todo.estimationDate == null;
     }
 
     @Override
@@ -36,6 +41,7 @@ public class Todo extends ProjectLevelArtifact<Todo>
         int result = super.hashCode();
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + charge;
+        result = 31 * result + (estimationDate != null ? estimationDate.hashCode() : 0);
         return result;
     }
 
@@ -55,6 +61,14 @@ public class Todo extends ProjectLevelArtifact<Todo>
         this.charge = charge;
     }
 
+    public Date getEstimationDate() {
+        return estimationDate;
+    }
+
+    public void setEstimationDate(Date estimationDate) {
+        this.estimationDate = estimationDate;
+    }
+
     @Override
     public Todo shallowClone() {
         Todo clone = new Todo();
@@ -62,6 +76,7 @@ public class Todo extends ProjectLevelArtifact<Todo>
         shallowCloneRootsInto(clone);
         clone.description = description;
         clone.charge = charge;
+        clone.estimationDate = estimationDate;
 
         return clone;
     }
