@@ -20,12 +20,6 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
     @Column(nullable = false)
     protected String name;
 
-    protected String mainContact;
-
-    protected String sponsors;
-
-    protected String finalClient;
-
     protected String goal;
 
     @Column(nullable = false)
@@ -33,10 +27,6 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
 
     @Column(nullable = false)
     protected Date endDate;
-
-    protected String hypotheses_constraints;
-
-    protected String history_decisions;
 
     protected String comment;
 
@@ -54,30 +44,6 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getMainContact() {
-        return mainContact;
-    }
-
-    public void setMainContact(String mainContact) {
-        this.mainContact = mainContact;
-    }
-
-    public String getSponsors() {
-        return sponsors;
-    }
-
-    public void setSponsors(String sponsors) {
-        this.sponsors = sponsors;
-    }
-
-    public String getFinalClient() {
-        return finalClient;
-    }
-
-    public void setFinalClient(String finalClient) {
-        this.finalClient = finalClient;
     }
 
     public String getGoal() {
@@ -102,22 +68,6 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public String getHypotheses_constraints() {
-        return hypotheses_constraints;
-    }
-
-    public void setHypotheses_constraints(String hypotheses_constraints) {
-        this.hypotheses_constraints = hypotheses_constraints;
-    }
-
-    public String getHistory_decisions() {
-        return history_decisions;
-    }
-
-    public void setHistory_decisions(String history_decisions) {
-        this.history_decisions = history_decisions;
     }
 
     public String getComment() {
