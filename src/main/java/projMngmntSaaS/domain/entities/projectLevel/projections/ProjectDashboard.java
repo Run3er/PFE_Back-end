@@ -8,8 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Projection of {@link Project} dashboard needed data.
- * Optimized for the dashboard as all its needed data is going to be inline.
+ * Projection of {@link Project} charter details data.
  */
 @Projection(name = "dashboard", types = { Project.class })
 public interface ProjectDashboard extends SubProjectDashboard

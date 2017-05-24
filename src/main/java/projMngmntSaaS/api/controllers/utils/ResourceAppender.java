@@ -6,8 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
-import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ConstructionSiteArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
 import projMngmntSaaS.domain.utils.UuidIdentifiable;
 
@@ -64,7 +66,7 @@ public class ResourceAppender
                     appendResources(project, ConstructionSite.class, project.getConstructionSites(),
                             subResources, appendedResourcesIDs);
                 }
-                else appendArtifacts(project, subResourcePath, subResources, appendedResourcesIDs);
+                else appendProjectArtifacts(project.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
                 break;
             case "subProjects":
                 SubProject subProject = entityManager.find(SubProject.class, parentResrcId);
@@ -76,7 +78,7 @@ public class ResourceAppender
                     appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(),
                             subResources, appendedResourcesIDs);
                 }
-                else appendArtifacts(subProject, subResourcePath, subResources, appendedResourcesIDs);
+                else appendSubProjectArtifacts(subProject.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
                 break;
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
@@ -84,7 +86,7 @@ public class ResourceAppender
                     throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
 
-                appendArtifacts(constructionSite, subResourcePath, subResources, appendedResourcesIDs);
+                appendConstructionSiteArtifacts(constructionSite.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
                 break;
             default:
                 throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
@@ -92,8 +94,34 @@ public class ResourceAppender
         return appendedResourcesIDs;
     }
 
-    private void appendArtifacts(ProjectLevel parentResrc, String subResourcePath,
-                                 Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
+    private void appendProjectArtifacts(ProjectArchivableContent parentResrc, String subResourcePath,
+                                        Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
+        switch (subResourcePath) {
+            case "reunionPlannings":
+                appendResources(parentResrc, ReunionPlanning.class, parentResrc.getReunionPlannings(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "communicationPlans":
+                appendResources(parentResrc, CommunicationPlan.class, parentResrc.getCommunicationPlans(),
+                        subResources, appendedResourcesIDs);
+                break;
+            case "writeups":
+                appendResources(parentResrc, Writeup.class, parentResrc.getWriteups(),
+                        subResources, appendedResourcesIDs);
+                break;
+        }
+        // case default must be handled by this method
+        appendSubProjectArtifacts(parentResrc, subResourcePath, subResources, appendedResourcesIDs);
+    }
+
+    private void appendSubProjectArtifacts(SubProjectArchivableContent parentResrc, String subResourcePath,
+                                           Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
+        // case default must be handled by this method
+        appendConstructionSiteArtifacts(parentResrc, subResourcePath, subResources, appendedResourcesIDs);
+    }
+
+    private void appendConstructionSiteArtifacts(ConstructionSiteArchivableContent parentResrc, String subResourcePath,
+                                                 Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         switch (subResourcePath) {
             case "actions":
                 appendResources(parentResrc, Action.class, parentResrc.getActions(),
@@ -127,20 +155,8 @@ public class ResourceAppender
                 appendResources(parentResrc, Todo.class, parentResrc.getTodos(),
                         subResources, appendedResourcesIDs);
                 break;
-            case "reunionPlannings":
-                appendResources(parentResrc, ReunionPlanning.class, parentResrc.getReunionPlannings(),
-                        subResources, appendedResourcesIDs);
-                break;
-            case "communicationPlans":
-                appendResources(parentResrc, CommunicationPlan.class, parentResrc.getCommunicationPlans(),
-                        subResources, appendedResourcesIDs);
-                break;
             case "humanResources":
                 appendResources(parentResrc, HumanResource.class, parentResrc.getHumanResources(),
-                        subResources, appendedResourcesIDs);
-                break;
-            case "writeups":
-                appendResources(parentResrc, Writeup.class, parentResrc.getWriteups(),
                         subResources, appendedResourcesIDs);
                 break;
             default:

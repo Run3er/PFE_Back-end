@@ -1,5 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel.projections;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
@@ -14,7 +15,9 @@ public interface ProjectLevelBudget
 {
     BigDecimal getBudgetInitial();
 
+    @Value("#{target.archivableContent.budgetToConsume}")
     BigDecimal getBudgetToConsume();
 
+    @Value("#{target.archivableContent.budgetConsumed}")
     BigDecimal getBudgetConsumed();
 }

@@ -20,29 +20,31 @@ public interface SubProjectDashboard
 {
     String getName();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetConsumedPercentage(target)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetConsumedPercentage(target.archivableContent.budgetConsumed, target.archivableContent.budgetToConsume)}")
     BigDecimal getBudgetConsumed();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetPrevisionGapPercentage(target)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getBudgetPrevisionGapPercentage(target.budgetInitial, target.archivableContent.budgetConsumed, target.archivableContent.budgetToConsume)}")
     BigDecimal getBudgetPrevisionGap();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargeConsumedPercentage(target)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargeConsumedPercentage(target.archivableContent.chargeConsumed, target.archivableContent.todos)}")
     BigDecimal getChargeConsumed();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargePrevisionGapPercentage(target)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getChargePrevisionGapPercentage(target.chargePrevision, target.archivableContent.chargeConsumed, target.archivableContent.todos)}")
     BigDecimal getChargePrevisionGap();
 
+    @Value("#{target.archivableContent.advancement}")
     int getAdvancement();
 
+    @Value("#{target.archivableContent.status}")
     ProjectLevelStatus getStatus();
 
-    @Value("#{target.milestones}")
+    @Value("#{target.archivableContent.milestones}")
     Collection<Milestone> getMilestones();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getActionsOngoingInTimeOrNotCount(target.actions)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getActionsOngoingInTimeOrNotCount(target.archivableContent.actions)}")
     Map<Boolean, Long> getActionsOngoingInTimeOrNotCount();
 
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getRiskStatusesCount(target.risks)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getRiskStatusesCount(target.archivableContent.risks)}")
     Map<RiskStatus, Long> getRiskStatusesCount();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getProjectLevelsAdvancement(target.constructionSites)}")

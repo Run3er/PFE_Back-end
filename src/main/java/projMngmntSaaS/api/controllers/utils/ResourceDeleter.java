@@ -6,8 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
-import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ConstructionSiteArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
 
 import javax.persistence.EntityManager;
@@ -59,7 +61,7 @@ public class ResourceDeleter
                         SubProject subProject = entityManager.find(SubProject.class, subResrcId);
                         deleteResource(SubProject.class, project.getSubProjects(), subProject);
                     }
-                    else deleteArtifact(project);
+                    else deleteProjectArtifact(project.getArchivableContent());
                     break;
                 }
             case "subProjects":
@@ -69,13 +71,13 @@ public class ResourceDeleter
                         ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, subResrcId);
                         deleteResource(subProject, subProject.getConstructionSites(), constructionSite);
                     }
-                    else deleteArtifact(subProject);
+                    else deleteSubProjectArtifact(subProject.getArchivableContent());
                     break;
                 }
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
                 if (constructionSite != null) {
-                    deleteArtifact(constructionSite);
+                    deleteConstructionSiteArtifact(constructionSite.getArchivableContent());
                 }
                 break;
             default:
@@ -83,7 +85,31 @@ public class ResourceDeleter
         }
     }
 
-    private void deleteArtifact(ProjectLevel parentResrc) {
+    private void deleteProjectArtifact(ProjectArchivableContent parentResrc) {
+        switch (subResourcePath) {
+            case "reunionPlannings":
+                ReunionPlanning reunionPlanning = entityManager.find(ReunionPlanning.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getReunionPlannings(), reunionPlanning);
+                break;
+            case "communicationPlans":
+                CommunicationPlan communicationPlan = entityManager.find(CommunicationPlan.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getCommunicationPlans(), communicationPlan);
+                break;
+            case "writeups":
+                Writeup writeup = entityManager.find(Writeup.class, subResrcId);
+                deleteResource(parentResrc, parentResrc.getWriteups(), writeup);
+                break;
+        }
+        // case default must be handled by this method
+        deleteSubProjectArtifact(parentResrc);
+    }
+
+    private void deleteSubProjectArtifact(SubProjectArchivableContent parentResrc) {
+        // case default must be handled by this method
+        deleteConstructionSiteArtifact(parentResrc);
+    }
+
+    private void deleteConstructionSiteArtifact(ConstructionSiteArchivableContent parentResrc) {
         switch (subResourcePath) {
             case "actions":
                 Action action = entityManager.find(Action.class, subResrcId);
@@ -117,21 +143,9 @@ public class ResourceDeleter
                 Todo todo = entityManager.find(Todo.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getTodos(), todo);
                 break;
-            case "reunionPlannings":
-                ReunionPlanning reunionPlanning = entityManager.find(ReunionPlanning.class, subResrcId);
-                deleteResource(parentResrc, parentResrc.getReunionPlannings(), reunionPlanning);
-                break;
-            case "communicationPlans":
-                CommunicationPlan communicationPlan = entityManager.find(CommunicationPlan.class, subResrcId);
-                deleteResource(parentResrc, parentResrc.getCommunicationPlans(), communicationPlan);
-                break;
             case "humanResources":
                 HumanResource humanResource = entityManager.find(HumanResource.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getHumanResources(), humanResource);
-                break;
-            case "writeups":
-                Writeup writeup = entityManager.find(Writeup.class, subResrcId);
-                deleteResource(parentResrc, parentResrc.getWriteups(), writeup);
                 break;
             default:
                 throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);

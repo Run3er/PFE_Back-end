@@ -4,11 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import projMngmntSaaS.domain.entities.projectLevel.*;
+import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
+import projMngmntSaaS.domain.entities.projectLevel.Project;
+import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
+import projMngmntSaaS.domain.entities.projectLevel.SubProject;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ConstructionSiteArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.CommunicationPlan;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.ProjectLevelArtifact;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Resource;
+import projMngmntSaaS.domain.entities.projectLevel.updates.ConstructionSiteUpdate;
+import projMngmntSaaS.domain.entities.projectLevel.updates.ProjectUpdate;
+import projMngmntSaaS.domain.entities.projectLevel.updates.SubProjectUpdate;
 import projMngmntSaaS.repositories.*;
 
 import java.util.Date;
@@ -91,37 +100,38 @@ public class ProjectFullUpdateArchiver
     }
 
     private void archiveProjectLevelUpdate(ProjectLevel projectLevel, Date updateTime) {
-        ProjectLevelUpdate update = new ProjectLevelUpdate(projectLevel, updateTime);
+        if (projectLevel instanceof Project) {
+            Project project = (Project) projectLevel;
+            ProjectUpdate update = new ProjectUpdate(project.getArchivableContent(), updateTime);
+            archiveProjectUpdate(project.getArchivableContent(), update);
+            project.getArchivedUpdates().add(update);
+        }
+        else if (projectLevel instanceof SubProject) {
+            SubProject subProject = (SubProject) projectLevel;
+            SubProjectUpdate update = new SubProjectUpdate(subProject.getArchivableContent(), updateTime);
+            archiveSubProjectUpdate(subProject.getArchivableContent(), update);
+            subProject.getArchivedUpdates().add(update);
+        }
+        else if (projectLevel instanceof ConstructionSite) {
+            ConstructionSite constructionSite = (ConstructionSite) projectLevel;
+            ConstructionSiteUpdate update = new ConstructionSiteUpdate(constructionSite.getArchivableContent(), updateTime);
+            archiveConstructionSiteUpdate(constructionSite.getArchivableContent(), update);
+            constructionSite.getArchivedUpdates().add(update);
+        }
+    }
 
+    private void archiveProjectUpdate(ProjectArchivableContent projectContents, ProjectArchivableContent update) {
+        archiveSubProjectUpdate(projectContents, update);
+        
         // Artifacts archiving
-        archiveArtifactCollection(update.getChangeRequests(), projectLevel.getChangeRequests(), changeRequestRepository);
-        archiveArtifactCollection(update.getDocuments(), projectLevel.getDocuments(), documentRepository);
-        archiveArtifactCollection(update.getMilestones(), projectLevel.getMilestones(), milestoneRepository);
-        archiveArtifactCollection(update.getPendingIssues(), projectLevel.getPendingIssues(), pendingIssueRepository);
-        archiveArtifactCollection(update.getRisks(), projectLevel.getRisks(), riskRepository);
-        archiveArtifactCollection(update.getResources(), projectLevel.getResources(), resourceRepository);
-        archiveArtifactCollection(update.getHumanResources(), projectLevel.getHumanResources(), humanResourceRepository);
-        archiveArtifactCollection(update.getTodos(), projectLevel.getTodos(), todoRepository);
-        archiveArtifactCollection(update.getCommunicationPlans(), projectLevel.getCommunicationPlans(), communicationPlanRepository);
-        archiveArtifactCollection(update.getReunionPlannings(), projectLevel.getReunionPlannings(), reunionPlanningRepository);
-        archiveArtifactCollection(update.getWriteups(), projectLevel.getWriteups(), writeupRepository);
-        archiveArtifactCollection(update.getActions(), projectLevel.getActions(), actionRepository);
+        archiveArtifactCollection(update.getCommunicationPlans(), projectContents.getCommunicationPlans(), communicationPlanRepository);
+        archiveArtifactCollection(update.getReunionPlannings(), projectContents.getReunionPlannings(), reunionPlanningRepository);
+        archiveArtifactCollection(update.getWriteups(), projectContents.getWriteups(), writeupRepository);
 
         // Setting each current artifact's dependency to its unarchived version
-
-        // Action-resource dependency
-        for (Action currentAction : projectLevel.getActions()) {
-            for (Resource resource : projectLevel.getResources()) {
-                if (currentAction.getSupervisor().getReference().equals(resource.getReference())) {
-                    currentAction.setSupervisor(resource);
-                    actionRepository.save(currentAction);
-                    break;
-                }
-            }
-        }
         // CommunicationPlan-resource dependency
-        for (CommunicationPlan communicationPlan : projectLevel.getCommunicationPlans()) {
-            for (Resource resource : projectLevel.getResources()) {
+        for (CommunicationPlan communicationPlan : projectContents.getCommunicationPlans()) {
+            for (Resource resource : projectContents.getResources()) {
                 if (communicationPlan.getSupervisor().getReference().equals(resource.getReference())) {
                     communicationPlan.setSupervisor(resource);
                     communicationPlanRepository.save(communicationPlan);
@@ -129,9 +139,36 @@ public class ProjectFullUpdateArchiver
                 }
             }
         }
+    }
 
-        // Archive update
-        projectLevel.getArchivedUpdates().add(update);
+    private void archiveSubProjectUpdate(SubProjectArchivableContent subProjectContents, SubProjectArchivableContent update) {
+        archiveConstructionSiteUpdate(subProjectContents, update);
+    }
+
+    private void archiveConstructionSiteUpdate(ConstructionSiteArchivableContent constructionSiteContents, ConstructionSiteArchivableContent update) {
+
+        // Artifacts archiving
+        archiveArtifactCollection(update.getChangeRequests(), constructionSiteContents.getChangeRequests(), changeRequestRepository);
+        archiveArtifactCollection(update.getDocuments(), constructionSiteContents.getDocuments(), documentRepository);
+        archiveArtifactCollection(update.getMilestones(), constructionSiteContents.getMilestones(), milestoneRepository);
+        archiveArtifactCollection(update.getPendingIssues(), constructionSiteContents.getPendingIssues(), pendingIssueRepository);
+        archiveArtifactCollection(update.getRisks(), constructionSiteContents.getRisks(), riskRepository);
+        archiveArtifactCollection(update.getResources(), constructionSiteContents.getResources(), resourceRepository);
+        archiveArtifactCollection(update.getHumanResources(), constructionSiteContents.getHumanResources(), humanResourceRepository);
+        archiveArtifactCollection(update.getTodos(), constructionSiteContents.getTodos(), todoRepository);
+        archiveArtifactCollection(update.getActions(), constructionSiteContents.getActions(), actionRepository);
+
+        // Setting each current artifact's dependency to its unarchived version
+        // Action-resource dependency
+        for (Action currentAction : constructionSiteContents.getActions()) {
+            for (Resource resource : constructionSiteContents.getResources()) {
+                if (currentAction.getSupervisor().getReference().equals(resource.getReference())) {
+                    currentAction.setSupervisor(resource);
+                    actionRepository.save(currentAction);
+                    break;
+                }
+            }
+        }
     }
 
     private  <T extends ProjectLevelArtifact<T>> void archiveArtifactCollection(Set<T> updateArtifactCollection,

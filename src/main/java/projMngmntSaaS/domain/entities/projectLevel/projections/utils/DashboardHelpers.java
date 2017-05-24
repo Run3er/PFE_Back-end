@@ -21,51 +21,46 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class DashboardHelpers
 {
-    public static BigDecimal getBudgetConsumedPercentage(ProjectLevel pl) {
-        BigDecimal budgetTotal = pl.getBudgetToConsume().add(pl.getBudgetConsumed());
+    public static BigDecimal getBudgetConsumedPercentage(BigDecimal budgetConsumed, BigDecimal budgetToConsume) {
+        BigDecimal budgetTotal = budgetToConsume.add(budgetConsumed);
         return budgetTotal.compareTo(BigDecimal.ZERO) == 0 ?
                 BigDecimal.ZERO :
-                pl.getBudgetConsumed().multiply(new BigDecimal(100)).divide(budgetTotal, BigDecimal.ROUND_CEILING);
+                budgetConsumed.multiply(new BigDecimal(100)).divide(budgetTotal, BigDecimal.ROUND_CEILING);
     }
 
-    public static BigDecimal getBudgetPrevisionGapPercentage(ProjectLevel pl) {
-        return pl.getBudgetInitial().compareTo(BigDecimal.ZERO) == 0 ?
+    public static BigDecimal getBudgetPrevisionGapPercentage(BigDecimal budgetInitial, BigDecimal budgetConsumed, BigDecimal budgetToConsume) {
+        return budgetInitial.compareTo(BigDecimal.ZERO) == 0 ?
                 BigDecimal.ZERO :
-                pl.getBudgetConsumed().add(pl.getBudgetToConsume()).subtract(pl.getBudgetInitial()).multiply(new BigDecimal(100)).divide(pl.getBudgetInitial(), BigDecimal.ROUND_CEILING);
+                budgetConsumed.add(budgetToConsume).subtract(budgetInitial).multiply(new BigDecimal(100)).divide(budgetInitial, BigDecimal.ROUND_CEILING);
     }
 
-    public static BigDecimal getChargeConsumedPercentage(ProjectLevel pl) {
+    public static BigDecimal getChargeConsumedPercentage(BigDecimal chargeConsumed, Set<Todo> todos) {
         BigDecimal chargeToConsume = new BigDecimal(
-                pl.getTodos()
-                        .stream()
-                        .mapToInt(Todo::getCharge)
-                        .sum()
+                todos.stream().mapToInt(Todo::getCharge).sum()
         );
-        BigDecimal chargeTotal = pl.getChargeConsumed().add(chargeToConsume);
+        BigDecimal chargeTotal = chargeConsumed.add(chargeToConsume);
         return chargeTotal.compareTo(BigDecimal.ZERO) == 0 ?
                 BigDecimal.ZERO :
-                pl.getChargeConsumed().multiply(new BigDecimal(100)).divide(chargeTotal, BigDecimal.ROUND_CEILING);
+                chargeConsumed.multiply(new BigDecimal(100)).divide(chargeTotal, BigDecimal.ROUND_CEILING);
     }
 
-    public static BigDecimal getChargePrevisionGapPercentage(ProjectLevel pl) {
+    public static BigDecimal getChargePrevisionGapPercentage(BigDecimal chargePrevision, BigDecimal chargeConsumed, Set<Todo> todos) {
         BigDecimal chargeToConsume = new BigDecimal(
-                pl.getTodos()
-                        .stream()
-                        .mapToInt(Todo::getCharge)
-                        .sum()
+                todos.stream().mapToInt(Todo::getCharge).sum()
         );
-        return pl.getChargePrevision().compareTo(BigDecimal.ZERO) == 0 ?
+        return chargePrevision.compareTo(BigDecimal.ZERO) == 0 ?
                 BigDecimal.ZERO :
-                pl.getChargeConsumed().add(chargeToConsume).subtract(pl.getChargePrevision()).multiply(new BigDecimal(100)).divide(pl.getChargePrevision(), BigDecimal.ROUND_CEILING);
+                chargeConsumed.add(chargeToConsume).subtract(chargePrevision).multiply(new BigDecimal(100)).divide(chargePrevision, BigDecimal.ROUND_CEILING);
     }
 
     public static Collection<Map<String, String>> getProjectLevelsAdvancement(Set<ProjectLevel> projectLevels) {
-        return projectLevels.stream()
+        return projectLevels
+                .stream()
                 .map(sp -> {
                     HashMap<String, String> sps = new HashMap<>();
                     sps.put("id", sp.getId() + "");
                     sps.put("name", sp.getName());
-                    sps.put("advancement", sp.getAdvancement() + "");
+                    sps.put("advancement", sp.getArchivableContent().getAdvancement() + "");
                     return sps;
                 })
                 .collect(Collectors.toList());

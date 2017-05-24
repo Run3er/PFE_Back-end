@@ -1,22 +1,23 @@
 package projMngmntSaaS.domain.entities.projectLevel;
 
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectLevelArchivableContent;
 import projMngmntSaaS.domain.utils.UuidIdentifiable;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 /**
  * This provides common project level properties.
  */
 @MappedSuperclass
-public abstract class ProjectLevel extends ProjectLevelContents implements UuidIdentifiable
+public abstract class ProjectLevel implements UuidIdentifiable
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected UUID id;
+
     @Column(nullable = false)
     protected String name;
 
@@ -30,10 +31,11 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
 
     protected String comment;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    protected Set<ProjectLevelUpdate> archivedUpdates = new HashSet<>();
+    protected BigDecimal budgetInitial = new BigDecimal(0);
 
-    @Override
+    @Column(precision = 10)
+    protected BigDecimal chargePrevision = new BigDecimal(0);
+
     public UUID getId() {
         return id;
     }
@@ -78,7 +80,21 @@ public abstract class ProjectLevel extends ProjectLevelContents implements UuidI
         this.comment = comment;
     }
 
-    public Set<ProjectLevelUpdate> getArchivedUpdates() {
-        return archivedUpdates;
+    public BigDecimal getBudgetInitial() {
+        return budgetInitial;
     }
+
+    public void setBudgetInitial(BigDecimal budgetInitial) {
+        this.budgetInitial = budgetInitial;
+    }
+
+    public BigDecimal getChargePrevision() {
+        return chargePrevision;
+    }
+
+    public void setChargePrevision(BigDecimal chargePrevision) {
+        this.chargePrevision = chargePrevision;
+    }
+
+    public abstract ProjectLevelArchivableContent getArchivableContent();
 }

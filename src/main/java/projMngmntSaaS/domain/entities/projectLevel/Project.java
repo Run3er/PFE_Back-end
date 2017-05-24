@@ -1,11 +1,10 @@
 package projMngmntSaaS.domain.entities.projectLevel;
 
 import projMngmntSaaS.domain.entities.ProjectsEntity;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.updates.ProjectUpdate;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +13,7 @@ import java.util.Set;
  * A project always belongs one to {@link projMngmntSaaS.domain.entities.ProjectsEntity}.
  */
 @Entity
-public class Project extends SubProject
+public class Project extends ProjectLevel
 {
     private String mainContact;
 
@@ -32,6 +31,15 @@ public class Project extends SubProject
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubProject> subProjects = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ConstructionSite> constructionSites = new HashSet<>();
+
+    @Embedded
+    private ProjectArchivableContent archivableContent = new ProjectArchivableContent();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProjectUpdate> archivedUpdates = new HashSet<>();
 
     public Project() {
         // no-arg constructor for ORM (due to reflection use)
@@ -87,5 +95,17 @@ public class Project extends SubProject
 
     public Set<SubProject> getSubProjects() {
         return subProjects;
+    }
+
+    public Set<ConstructionSite> getConstructionSites() {
+        return constructionSites;
+    }
+
+    public ProjectArchivableContent getArchivableContent() {
+        return archivableContent;
+    }
+
+    public Set<ProjectUpdate> getArchivedUpdates() {
+        return archivedUpdates;
     }
 }
