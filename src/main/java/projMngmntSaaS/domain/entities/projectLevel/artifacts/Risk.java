@@ -1,5 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
+import projMngmntSaaS.domain.entities.enums.RiskCategory;
 import projMngmntSaaS.domain.entities.enums.RiskStatus;
 
 import javax.persistence.Column;
@@ -27,11 +28,16 @@ public class Risk extends ProjectLevelArtifact<Risk>
     @Column(nullable = false)
     private int impact;
 
+    private String cause;
+
     @Column(nullable = false)
     private String actionPlan;
 
     @Column(nullable = false)
     private RiskStatus status;
+
+    @Column(nullable = false)
+    private RiskCategory category;
 
     private String decision;
 
@@ -60,8 +66,10 @@ public class Risk extends ProjectLevelArtifact<Risk>
         if (probability != risk.probability) return false;
         if (impact != risk.impact) return false;
         if (description != null ? !description.equals(risk.description) : risk.description != null) return false;
+        if (cause != null ? !cause.equals(risk.cause) : risk.cause != null) return false;
         if (actionPlan != null ? !actionPlan.equals(risk.actionPlan) : risk.actionPlan != null) return false;
         if (status != risk.status) return false;
+        if (category != risk.category) return false;
         if (decision != null ? !decision.equals(risk.decision) : risk.decision != null) return false;
         if (detectionDate != null ? !detectionDate.equals(risk.detectionDate) : risk.detectionDate != null)
             return false;
@@ -77,8 +85,10 @@ public class Risk extends ProjectLevelArtifact<Risk>
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + probability;
         result = 31 * result + impact;
+        result = 31 * result + (cause != null ? cause.hashCode() : 0);
         result = 31 * result + (actionPlan != null ? actionPlan.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
         result = 31 * result + (decision != null ? decision.hashCode() : 0);
         result = 31 * result + (detectionDate != null ? detectionDate.hashCode() : 0);
         result = 31 * result + (qualificationDate != null ? qualificationDate.hashCode() : 0);
@@ -119,6 +129,14 @@ public class Risk extends ProjectLevelArtifact<Risk>
         this.impact = impact;
     }
 
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
+    }
+
     public String getActionPlan() {
         return actionPlan;
     }
@@ -133,6 +151,14 @@ public class Risk extends ProjectLevelArtifact<Risk>
 
     public void setStatus(RiskStatus status) {
         this.status = status;
+    }
+
+    public RiskCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(RiskCategory category) {
+        this.category = category;
     }
 
     public String getDecision() {
@@ -183,8 +209,10 @@ public class Risk extends ProjectLevelArtifact<Risk>
         clone.description = description;
         clone.probability = probability;
         clone.impact = impact;
+        clone.cause = cause;
         clone.actionPlan = actionPlan;
         clone.status = status;
+        clone.category = category;
         clone.decision = decision;
         clone.detectionDate = detectionDate;
         clone.qualificationDate = qualificationDate;
