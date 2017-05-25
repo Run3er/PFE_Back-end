@@ -1,6 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel.fixedDetails.interfaces;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -28,11 +28,11 @@ public interface IProjectLevelDetails
 
     void setComment(String comment);
 
-    BigDecimal getBudgetInitial();
+    BigInteger getBudgetInitial();
 
-    void setBudgetInitial(BigDecimal budgetInitial);
+    void setBudgetInitial(BigInteger budgetInitial);
 
-    BigDecimal getChargePrevision();
+    BigInteger getChargePrevision();
 
-    void setChargePrevision(BigDecimal chargePrevision);
+    void setChargePrevision(BigInteger chargePrevision);
 }

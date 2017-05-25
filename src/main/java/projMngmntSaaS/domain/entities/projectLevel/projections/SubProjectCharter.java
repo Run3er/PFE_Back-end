@@ -5,7 +5,7 @@ import org.springframework.data.rest.core.config.Projection;
 import projMngmntSaaS.domain.entities.enums.ProjectLevelStatus;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -25,7 +25,7 @@ public interface SubProjectCharter
     String getComment();
 
     @Value("#{target.advancement}")
-    BigDecimal getAdvancement();
+    BigInteger getAdvancement();
 
     @Value("#{target.status}")
     ProjectLevelStatus getStatus();

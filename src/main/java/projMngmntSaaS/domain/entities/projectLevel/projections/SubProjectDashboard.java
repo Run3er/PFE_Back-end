@@ -7,7 +7,7 @@ import projMngmntSaaS.domain.entities.enums.RiskStatus;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Milestone;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
@@ -21,16 +21,16 @@ public interface SubProjectDashboard
     String getName();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getBudgetConsumedPercentage(target)}")
-    BigDecimal getBudgetConsumed();
+    BigInteger getBudgetConsumed();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getBudgetPrevisionGapPercentage(target)}")
-    BigDecimal getBudgetPrevisionGap();
+    BigInteger getBudgetPrevisionGap();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getChargeConsumedPercentage(target)}")
-    BigDecimal getChargeConsumed();
+    BigInteger getChargeConsumed();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getChargePrevisionGapPercentage(target)}")
-    BigDecimal getChargePrevisionGap();
+    BigInteger getChargePrevisionGap();
 
     @Value("#{target.advancement}")
     int getAdvancement();

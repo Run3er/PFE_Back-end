@@ -2,7 +2,7 @@ package projMngmntSaaS.domain.entities.projectLevel.projections.utils;
 
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Todo;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,15 +17,15 @@ public interface ProjectLevel
 
     int getAdvancement();
 
-    BigDecimal getBudgetInitial();
+    BigInteger getBudgetInitial();
 
-    BigDecimal getBudgetConsumed();
+    BigInteger getBudgetConsumed();
 
-    BigDecimal getBudgetToConsume();
+    BigInteger getBudgetToConsume();
 
-    BigDecimal getChargePrevision();
+    BigInteger getChargePrevision();
 
-    BigDecimal getChargeConsumed();
+    BigInteger getChargeConsumed();
 
     Set<Todo> getTodos();
 }

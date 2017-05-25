@@ -6,7 +6,7 @@ import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Risk;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Todo;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,44 +20,44 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class ProjectionsHelper
 {
-    public static BigDecimal getBudgetConsumedPercentage(ProjectLevel pl) {
-        if (pl.getBudgetToConsume().equals(BigDecimal.ZERO)) {
+    public static BigInteger getBudgetConsumedPercentage(ProjectLevel pl) {
+        if (pl.getBudgetToConsume().compareTo(BigInteger.ZERO) == 0) {
             return null;
         }
         // else budgetToConsume is > 0
-        BigDecimal budgetTotal = pl.getBudgetToConsume().add(pl.getBudgetConsumed());
-        return pl.getBudgetConsumed().multiply(new BigDecimal(100)).divide(budgetTotal, BigDecimal.ROUND_CEILING);
+        BigInteger budgetTotal = pl.getBudgetToConsume().add(pl.getBudgetConsumed());
+        return pl.getBudgetConsumed().multiply(new BigInteger("100")).divide(budgetTotal);
     }
 
-    public static BigDecimal getBudgetPrevisionGapPercentage(ProjectLevel pl) {
-        return pl.getBudgetInitial().compareTo(BigDecimal.ZERO) == 0 ?
+    public static BigInteger getBudgetPrevisionGapPercentage(ProjectLevel pl) {
+        return pl.getBudgetInitial().compareTo(BigInteger.ZERO) == 0 ?
                 null :
-                pl.getBudgetConsumed().add(pl.getBudgetToConsume()).subtract(pl.getBudgetInitial()).multiply(new BigDecimal(100)).divide(pl.getBudgetInitial(), BigDecimal.ROUND_CEILING);
+                pl.getBudgetConsumed().add(pl.getBudgetToConsume()).subtract(pl.getBudgetInitial()).multiply(new BigInteger("100")).divide((pl.getBudgetInitial()));
     }
 
-    public static BigDecimal getChargeConsumedPercentage(ProjectLevel pl) {
-        BigDecimal chargeToConsume = new BigDecimal(
+    public static BigInteger getChargeConsumedPercentage(ProjectLevel pl) {
+        BigInteger chargeToConsume = new BigInteger(
                 pl.getTodos()
                         .stream()
                         .mapToInt(Todo::getCharge)
-                        .sum()
+                        .sum() + ""
         );
-        BigDecimal chargeTotal = pl.getChargeConsumed().add(chargeToConsume);
-        return chargeTotal.compareTo(BigDecimal.ZERO) == 0 ?
-                BigDecimal.ZERO :
-                pl.getChargeConsumed().multiply(new BigDecimal(100)).divide(chargeTotal, BigDecimal.ROUND_CEILING);
+        BigInteger chargeTotal = pl.getChargeConsumed().add(chargeToConsume);
+        return chargeTotal.compareTo(BigInteger.ZERO) == 0 ?
+                BigInteger.ZERO :
+                pl.getChargeConsumed().multiply(new BigInteger("100")).divide((chargeTotal));
     }
 
-    public static BigDecimal getChargePrevisionGapPercentage(ProjectLevel pl) {
-        BigDecimal chargeToConsume = new BigDecimal(
+    public static BigInteger getChargePrevisionGapPercentage(ProjectLevel pl) {
+        BigInteger chargeToConsume = new BigInteger(
                 pl.getTodos()
                         .stream()
                         .mapToInt(Todo::getCharge)
-                        .sum()
+                        .sum() + ""
         );
-        return pl.getChargePrevision().compareTo(BigDecimal.ZERO) == 0 ?
+        return pl.getChargePrevision().compareTo(BigInteger.ZERO) == 0 ?
                 null :
-                pl.getChargeConsumed().add(chargeToConsume).subtract(pl.getChargePrevision()).multiply(new BigDecimal(100)).divide(pl.getChargePrevision(), BigDecimal.ROUND_CEILING);
+                pl.getChargeConsumed().add(chargeToConsume).subtract(pl.getChargePrevision()).multiply(new BigInteger("100")).divide((pl.getChargePrevision()));
     }
 
     public static Collection<Map<String, String>> getProjectLevelsAdvancement(Set<ProjectLevel> projectLevels) {

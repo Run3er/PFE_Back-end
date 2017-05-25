@@ -5,7 +5,7 @@ import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.ProjectLevelDeta
 import projMngmntSaaS.domain.utils.UuidIdentifiable;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -20,12 +20,12 @@ public abstract class ProjectLevelArchivableContent implements UuidIdentifiable
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected UUID id;
 
-    protected BigDecimal budgetToConsume = new BigDecimal(0);
+    protected BigInteger budgetToConsume = BigInteger.ZERO;
 
-    protected BigDecimal budgetConsumed = new BigDecimal(0);
+    protected BigInteger budgetConsumed = BigInteger.ZERO;
 
     @Column(precision = 10)
-    protected BigDecimal chargeConsumed = new BigDecimal(0);
+    protected BigInteger chargeConsumed = BigInteger.ZERO;
 
     @Column(nullable = false, precision = 3)
     protected int advancement = 0;
@@ -81,27 +81,27 @@ public abstract class ProjectLevelArchivableContent implements UuidIdentifiable
         return id;
     }
 
-    public BigDecimal getBudgetToConsume() {
+    public BigInteger getBudgetToConsume() {
         return budgetToConsume;
     }
 
-    public void setBudgetToConsume(BigDecimal budgetToConsume) {
+    public void setBudgetToConsume(BigInteger budgetToConsume) {
         this.budgetToConsume = budgetToConsume;
     }
 
-    public BigDecimal getBudgetConsumed() {
+    public BigInteger getBudgetConsumed() {
         return budgetConsumed;
     }
 
-    public void setBudgetConsumed(BigDecimal budgetConsumed) {
+    public void setBudgetConsumed(BigInteger budgetConsumed) {
         this.budgetConsumed = budgetConsumed;
     }
 
-    public BigDecimal getChargeConsumed() {
+    public BigInteger getChargeConsumed() {
         return chargeConsumed;
     }
 
-    public void setChargeConsumed(BigDecimal chargeConsumed) {
+    public void setChargeConsumed(BigInteger chargeConsumed) {
         this.chargeConsumed = chargeConsumed;
     }
 

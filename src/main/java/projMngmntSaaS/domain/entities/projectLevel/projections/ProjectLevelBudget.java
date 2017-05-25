@@ -5,7 +5,7 @@ import org.springframework.data.rest.core.config.Projection;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * TODO: description
@@ -13,11 +13,11 @@ import java.math.BigDecimal;
 @Projection(name = "budget", types = { Project.class, SubProject.class})
 public interface ProjectLevelBudget
 {
-    BigDecimal getBudgetInitial();
+    BigInteger getBudgetInitial();
 
     @Value("#{target.budgetToConsume}")
-    BigDecimal getBudgetToConsume();
+    BigInteger getBudgetToConsume();
 
     @Value("#{target.budgetConsumed}")
-    BigDecimal getBudgetConsumed();
+    BigInteger getBudgetConsumed();
 }

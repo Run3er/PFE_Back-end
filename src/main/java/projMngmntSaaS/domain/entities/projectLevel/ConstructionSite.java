@@ -11,7 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -82,19 +82,19 @@ public class ConstructionSite extends ConstructionSiteArchivableContent implemen
         this.fixedDetails.setComment(comment);
     }
 
-    public BigDecimal getBudgetInitial() {
+    public BigInteger getBudgetInitial() {
         return fixedDetails.getBudgetInitial();
     }
 
-    public void setBudgetInitial(BigDecimal budgetInitial) {
+    public void setBudgetInitial(BigInteger budgetInitial) {
         this.fixedDetails.setBudgetInitial(budgetInitial);
     }
 
-    public BigDecimal getChargePrevision() {
+    public BigInteger getChargePrevision() {
         return fixedDetails.getChargePrevision();
     }
 
-    public void setChargePrevision(BigDecimal chargePrevision) {
+    public void setChargePrevision(BigInteger chargePrevision) {
         this.fixedDetails.setChargePrevision(chargePrevision);
     }
 }

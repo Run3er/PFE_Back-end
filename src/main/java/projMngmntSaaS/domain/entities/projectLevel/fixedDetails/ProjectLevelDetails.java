@@ -5,7 +5,7 @@ import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.interfaces.IProj
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -28,10 +28,10 @@ public abstract class ProjectLevelDetails implements IProjectLevelDetails
 
     protected String comment;
 
-    protected BigDecimal budgetInitial = new BigDecimal(0);
+    protected BigInteger budgetInitial = BigInteger.ZERO;
 
     @Column(precision = 10)
-    protected BigDecimal chargePrevision = new BigDecimal(0);
+    protected BigInteger chargePrevision = BigInteger.ZERO;
 
     public String getName() {
         return name;
@@ -73,19 +73,19 @@ public abstract class ProjectLevelDetails implements IProjectLevelDetails
         this.comment = comment;
     }
 
-    public BigDecimal getBudgetInitial() {
+    public BigInteger getBudgetInitial() {
         return budgetInitial;
     }
 
-    public void setBudgetInitial(BigDecimal budgetInitial) {
+    public void setBudgetInitial(BigInteger budgetInitial) {
         this.budgetInitial = budgetInitial;
     }
 
-    public BigDecimal getChargePrevision() {
+    public BigInteger getChargePrevision() {
         return chargePrevision;
     }
 
-    public void setChargePrevision(BigDecimal chargePrevision) {
+    public void setChargePrevision(BigInteger chargePrevision) {
         this.chargePrevision = chargePrevision;
     }
 }
