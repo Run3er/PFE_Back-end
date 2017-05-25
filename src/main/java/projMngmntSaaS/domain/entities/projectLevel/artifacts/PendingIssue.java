@@ -1,7 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
 import projMngmntSaaS.domain.entities.enums.PendingIssueStatus;
-import projMngmntSaaS.domain.entities.enums.ResourceType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +23,7 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
     private PendingIssueStatus status;
 
     @ManyToOne(optional = false)
-    private Resource supervisor;
+    private HumanResource supervisor;
 
     @Column(nullable = false)
     private int priority;
@@ -97,14 +96,11 @@ public class PendingIssue extends ProjectLevelArtifact<PendingIssue>
         this.status = status;
     }
 
-    public Resource getSupervisor() {
+    public HumanResource getSupervisor() {
         return supervisor;
     }
 
-    public void setSupervisor(Resource supervisor) {
-        if (supervisor.getType() != ResourceType.HUMAN) {
-            throw new IllegalArgumentException("Supervisor can only be a resource of type " + ResourceType.HUMAN + ".");
-        }
+    public void setSupervisor(HumanResource supervisor) {
         this.supervisor = supervisor;
     }
 

@@ -11,10 +11,7 @@ import projMngmntSaaS.domain.entities.projectLevel.archivableContents.Constructi
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectLevelArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
-import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
-import projMngmntSaaS.domain.entities.projectLevel.artifacts.CommunicationPlan;
-import projMngmntSaaS.domain.entities.projectLevel.artifacts.ProjectLevelArtifact;
-import projMngmntSaaS.domain.entities.projectLevel.artifacts.Resource;
+import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
 import projMngmntSaaS.domain.entities.projectLevel.updates.ConstructionSiteUpdate;
 import projMngmntSaaS.domain.entities.projectLevel.updates.ProjectUpdate;
 import projMngmntSaaS.domain.entities.projectLevel.updates.SubProjectUpdate;
@@ -131,7 +128,7 @@ public class ProjectFullUpdateArchiver
         // Setting each current artifact's dependency to its unarchived version
         // CommunicationPlan-resource dependency
         for (CommunicationPlan communicationPlan : projectContents.getCommunicationPlans()) {
-            for (Resource resource : projectContents.getResources()) {
+            for (HumanResource resource : projectContents.getHumanResources()) {
                 if (communicationPlan.getSupervisor().getReference().equals(resource.getReference())) {
                     communicationPlan.setSupervisor(resource);
                     communicationPlanRepository.save(communicationPlan);
@@ -161,10 +158,20 @@ public class ProjectFullUpdateArchiver
         // Setting each current artifact's dependency to its unarchived version
         // Action-resource dependency
         for (Action currentAction : constructionSiteContents.getActions()) {
-            for (Resource resource : constructionSiteContents.getResources()) {
+            for (HumanResource resource : constructionSiteContents.getHumanResources()) {
                 if (currentAction.getSupervisor().getReference().equals(resource.getReference())) {
                     currentAction.setSupervisor(resource);
                     actionRepository.save(currentAction);
+                    break;
+                }
+            }
+        }
+        // PendingIssue-resource dependency
+        for (PendingIssue pendingIssue : constructionSiteContents.getPendingIssues()) {
+            for (HumanResource resource : constructionSiteContents.getHumanResources()) {
+                if (pendingIssue.getSupervisor().getReference().equals(resource.getReference())) {
+                    pendingIssue.setSupervisor(resource);
+                    pendingIssueRepository.save(pendingIssue);
                     break;
                 }
             }

@@ -1,7 +1,5 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
-import projMngmntSaaS.domain.entities.enums.ResourceType;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -16,7 +14,7 @@ public class CommunicationPlan extends ProjectLevelArtifact<CommunicationPlan>
     private String name;
 
     @ManyToOne(optional = false)
-    private Resource supervisor;
+    private HumanResource supervisor;
 
     public CommunicationPlan() {
         // no-arg constructor for ORM (due to reflection use)
@@ -50,14 +48,11 @@ public class CommunicationPlan extends ProjectLevelArtifact<CommunicationPlan>
         this.name = name;
     }
 
-    public Resource getSupervisor() {
+    public HumanResource getSupervisor() {
         return supervisor;
     }
 
-    public void setSupervisor(Resource supervisor) {
-        if (supervisor.getType() != ResourceType.HUMAN) {
-            throw new IllegalArgumentException("Supervisor can only be a resource of type " + ResourceType.HUMAN + ".");
-        }
+    public void setSupervisor(HumanResource supervisor) {
         this.supervisor = supervisor;
     }
 

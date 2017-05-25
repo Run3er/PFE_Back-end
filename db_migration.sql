@@ -17,7 +17,6 @@ CREATE SCHEMA IF NOT EXISTS default_mock_tenant;
 CREATE SCHEMA IF NOT EXISTS "43d44eae-cd10-4ffb-97e1-c3e189119659";
 CREATE SCHEMA IF NOT EXISTS "b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50";
 
-
 --
 -- PostgreSQL database dump
 --
@@ -2358,13 +2357,6 @@ ALTER TABLE ONLY project_construction_sites
   ADD CONSTRAINT fk74uuom0ivtegoqllqk1t881u8 FOREIGN KEY (project_id) REFERENCES project (id);
 
 --
--- Name: communication_plan fk7ghff83ibuitib8wm13ilf96c; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
---
-
-ALTER TABLE ONLY communication_plan
-  ADD CONSTRAINT fk7ghff83ibuitib8wm13ilf96c FOREIGN KEY (supervisor_id) REFERENCES resource (id);
-
---
 -- Name: project_update_documents fk812a35paspvn21cpt39cdx5pl; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
 --
 
@@ -2531,13 +2523,6 @@ ALTER TABLE ONLY project_pending_issues
 
 ALTER TABLE ONLY document
   ADD CONSTRAINT fkbpcwjq9iut4jaixq1a58pyuv9 FOREIGN KEY (last_version_id) REFERENCES document (id);
-
---
--- Name: pending_issue fkbqf4to6tk25hymldg9tsxgtrr; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
---
-
-ALTER TABLE ONLY pending_issue
-  ADD CONSTRAINT fkbqf4to6tk25hymldg9tsxgtrr FOREIGN KEY (supervisor_id) REFERENCES resource (id);
 
 --
 -- Name: project_update_risks fkca17ae8vvb22ptv6l46lrb9gb; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
@@ -2757,6 +2742,13 @@ ALTER TABLE ONLY change_request
   ADD CONSTRAINT fkjcojscffeql8rw2re4nyn0khi FOREIGN KEY (last_version_id) REFERENCES change_request (id);
 
 --
+-- Name: action fkjh6y55bxr3tfb3m77d6i1k559; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
+--
+
+ALTER TABLE ONLY action
+  ADD CONSTRAINT fkjh6y55bxr3tfb3m77d6i1k559 FOREIGN KEY (supervisor_id) REFERENCES human_resource (id);
+
+--
 -- Name: pending_issue fkjuhfb6ec5gc48vksimm5a8l1c; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
 --
 
@@ -2855,6 +2847,13 @@ ALTER TABLE ONLY contribution
   ADD CONSTRAINT fklltff3umyak02l0nlov2f14lk FOREIGN KEY (project_id) REFERENCES project (id);
 
 --
+-- Name: communication_plan fklmvuvkh22wtt5inny3bstjbrd; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
+--
+
+ALTER TABLE ONLY communication_plan
+  ADD CONSTRAINT fklmvuvkh22wtt5inny3bstjbrd FOREIGN KEY (supervisor_id) REFERENCES human_resource (id);
+
+--
 -- Name: construction_site_update_pending_issues fklr7hc1vkn9ounxhq2cw9f71bo; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
 --
 
@@ -2939,6 +2938,13 @@ ALTER TABLE ONLY project_update_pending_issues
   ADD CONSTRAINT fknbm87p0j1k70it67gwsrvttx7 FOREIGN KEY (project_update_id) REFERENCES project_update (id);
 
 --
+-- Name: pending_issue fknd8x8279iec1a5liwxr5sk6l8; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
+--
+
+ALTER TABLE ONLY pending_issue
+  ADD CONSTRAINT fknd8x8279iec1a5liwxr5sk6l8 FOREIGN KEY (supervisor_id) REFERENCES human_resource (id);
+
+--
 -- Name: project_archived_updates fkngkj55u24ft7y5cxljjh50j0v; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
 --
 
@@ -2979,13 +2985,6 @@ ALTER TABLE ONLY project_update_todos
 
 ALTER TABLE ONLY project_construction_sites
   ADD CONSTRAINT fkoorr4mi01s40npkrcijko392m FOREIGN KEY (construction_sites_id) REFERENCES construction_site (id);
-
---
--- Name: action fkotmi03cjcqnpdadtfivkmjq1i; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
---
-
-ALTER TABLE ONLY action
-  ADD CONSTRAINT fkotmi03cjcqnpdadtfivkmjq1i FOREIGN KEY (supervisor_id) REFERENCES resource (id);
 
 --
 -- Name: sub_project_construction_sites fkp9xpraaykbyjhai3567dnlx76; Type: FK CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
@@ -3156,15 +3155,17 @@ ALTER TABLE ONLY construction_site_update_change_requests
 -- populate with user (login:"Frodo"; password:"Baggins")
 INSERT INTO user_account (id, login, password_hash, password_salt, first_name, last_name) VALUES
   ('73c60097-4c7c-4c74-a347-5f69fcaef9fb', 'Frodo',
-   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF', 'Frodo', 'Baggins');
+   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF',
+   'Frodo', 'Baggins');
 -- populate with user (login:"Bilbo"; password:"Baggins")
 INSERT INTO user_account (id, login, password_hash, password_salt, first_name, last_name) VALUES
-  ('73c60097-4c7c-4c74-a347-5f69fcaef9fb', 'Bilbo',
-   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF', 'Bilbo', 'Baggins');
+  ('98c60097-4c7c-4c74-a347-5f69fcaef9da', 'Bilbo',
+   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF',
+   'Bilbo', 'Baggins');
 
 -- Populate with resources
-INSERT INTO resource (id, reference, name, type, last_version_id)
-VALUES ('13814d0f-4e6c-4739-bac3-a011b8bbfdd3', 'd6b1719c-7a92-4aca-86f8-5129a3b288fc', 'Ali', 0, NULL);
-INSERT INTO resource (id, reference, name, type, last_version_id)
-VALUES ('724a77b9-8a4d-4d81-9e76-ca87a8534395', '992f27a5-55df-4ab6-b6fe-889378a7efe7', 'Fatma', 0, NULL);
+INSERT INTO human_resource (id, reference, name, last_version_id)
+VALUES ('13814d0f-4e6c-4739-bac3-a011b8bbfdd3', 'd6b1719c-7a92-4aca-86f8-5129a3b288fc', 'Ali', NULL);
+INSERT INTO human_resource (id, reference, name, last_version_id)
+VALUES ('724a77b9-8a4d-4d81-9e76-ca87a8534395', '992f27a5-55df-4ab6-b6fe-889378a7efe7', 'Fatma', NULL);
 
