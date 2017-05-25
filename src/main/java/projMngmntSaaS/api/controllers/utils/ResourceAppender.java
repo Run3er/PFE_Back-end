@@ -1,6 +1,7 @@
 package projMngmntSaaS.api.controllers.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import projMngmntSaaS.domain.entities.ProjectsEntity;
@@ -12,13 +13,11 @@ import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArc
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
 import projMngmntSaaS.domain.utils.UuidIdentifiable;
+import projMngmntSaaS.repositories.HumanResourceRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Appends sub-resources to their parent parent resource in batch.
@@ -32,6 +31,9 @@ public class ResourceAppender
     @PersistenceContext
     private EntityManager entityManager;
 
+    // TODO: remove after correcting behavior for transactional complex entry appending
+    @Autowired
+    HumanResourceRepository humanResourceRepository;
 
     @Transactional
     public List<UUID> append(String parentResourcePath, UUID parentResrcId, String subResourcePath, Collection<?> subResources) throws IllegalArgumentException {
@@ -167,12 +169,41 @@ public class ResourceAppender
     private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType, Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         ObjectMapper mapper = new ObjectMapper();
         for (Object subResource : subResources) {
+            // TODO: remove & correct behavior for transactional complex entry appending
+            LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap<String, String>) subResource;
+            if (linkedHashMap.get("supervisor") != null) {
+                linkedHashMap.remove("supervisor");
+            }
+
             U concreteSubResource = null;
             try {
                 concreteSubResource = mapper.convertValue(subResource, subResourcesType);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
+
+            // TODO: remove & correct behavior for transactional complex entry appending
+            if (concreteSubResource instanceof Action || concreteSubResource instanceof PendingIssue || concreteSubResource instanceof CommunicationPlan) {
+                HumanResource humanResource;
+                List<HumanResource> humanResources = humanResourceRepository.findAll();
+                if (humanResources.size() > 0) {
+                    humanResource = humanResources.get(0);
+                } else {
+                    humanResource = new HumanResource();
+                    humanResource.setName("Ali");
+                    humanResourceRepository.save(humanResource);
+                }
+                if (concreteSubResource instanceof Action) {
+                    ((Action) concreteSubResource).setSupervisor(humanResource);
+                }
+                if (concreteSubResource instanceof PendingIssue) {
+                    ((PendingIssue) concreteSubResource).setSupervisor(humanResource);
+                }
+                if (concreteSubResource instanceof CommunicationPlan) {
+                    ((CommunicationPlan) concreteSubResource).setSupervisor(humanResource);
+                }
+            }
+
             entityManager.persist(concreteSubResource);
             appendableCollection.add(concreteSubResource);
             appendedResourcesIDs.add(concreteSubResource.getId());
