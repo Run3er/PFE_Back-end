@@ -1,3 +1,23 @@
+-- create global schema (for administrator users)
+CREATE SCHEMA IF NOT EXISTS tenants_global;
+-- create tenants table inside
+CREATE TABLE IF NOT EXISTS tenants_global.tenant
+(
+  id     UUID                   NOT NULL PRIMARY KEY,
+  pseudo CHARACTER VARYING(255) NOT NULL
+);
+-- populate with tenants
+INSERT INTO tenants_global.tenant (id, pseudo) VALUES ('43d44eae-cd10-4ffb-97e1-c3e189119659', 'tenant_a');
+INSERT INTO tenants_global.tenant (id, pseudo) VALUES ('b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50', 'tenant_b');
+
+-- create mock-intended-only schema (needed for hibernate initialization)
+CREATE SCHEMA IF NOT EXISTS default_mock_tenant;
+
+-- create tenant schemas
+CREATE SCHEMA IF NOT EXISTS "43d44eae-cd10-4ffb-97e1-c3e189119659";
+CREATE SCHEMA IF NOT EXISTS "b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50";
+
+
 --
 -- PostgreSQL database dump
 --
@@ -88,17 +108,17 @@ ALTER TABLE communication_plan
 
 CREATE TABLE construction_site (
   id                UUID                        NOT NULL,
+  advancement       INTEGER                     NOT NULL,
+  budget_consumed   NUMERIC(19, 2),
+  budget_to_consume NUMERIC(19, 2),
+  charge_consumed   NUMERIC(10, 0),
   budget_initial    NUMERIC(19, 2),
   charge_prevision  NUMERIC(10, 0),
   comment           CHARACTER VARYING(255),
   end_date          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   goal              CHARACTER VARYING(255),
   name              CHARACTER VARYING(255)      NOT NULL,
-  start_date        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  advancement       INTEGER                     NOT NULL,
-  budget_consumed   NUMERIC(19, 2),
-  budget_to_consume NUMERIC(19, 2),
-  charge_consumed   NUMERIC(10, 0)
+  start_date        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 
@@ -496,6 +516,16 @@ ALTER TABLE pending_issue
 
 CREATE TABLE project (
   id                     UUID                        NOT NULL,
+  advancement            INTEGER                     NOT NULL,
+  budget_consumed        NUMERIC(19, 2),
+  budget_to_consume      NUMERIC(19, 2),
+  charge_consumed        NUMERIC(10, 0),
+  status                 INTEGER                     NOT NULL,
+  final_client           CHARACTER VARYING(255),
+  history_decisions      CHARACTER VARYING(255),
+  hypotheses_constraints CHARACTER VARYING(255),
+  main_contact           CHARACTER VARYING(255),
+  sponsors               CHARACTER VARYING(255),
   budget_initial         NUMERIC(19, 2),
   charge_prevision       NUMERIC(10, 0),
   comment                CHARACTER VARYING(255),
@@ -503,16 +533,6 @@ CREATE TABLE project (
   goal                   CHARACTER VARYING(255),
   name                   CHARACTER VARYING(255)      NOT NULL,
   start_date             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  status                 INTEGER                     NOT NULL,
-  advancement            INTEGER                     NOT NULL,
-  budget_consumed        NUMERIC(19, 2),
-  budget_to_consume      NUMERIC(19, 2),
-  charge_consumed        NUMERIC(10, 0),
-  final_client           CHARACTER VARYING(255),
-  history_decisions      CHARACTER VARYING(255),
-  hypotheses_constraints CHARACTER VARYING(255),
-  main_contact           CHARACTER VARYING(255),
-  sponsors               CHARACTER VARYING(255),
   entity_id              UUID
 );
 
@@ -968,18 +988,18 @@ ALTER TABLE risk
 
 CREATE TABLE sub_project (
   id                UUID                        NOT NULL,
+  advancement       INTEGER                     NOT NULL,
+  budget_consumed   NUMERIC(19, 2),
+  budget_to_consume NUMERIC(19, 2),
+  charge_consumed   NUMERIC(10, 0),
+  status            INTEGER                     NOT NULL,
   budget_initial    NUMERIC(19, 2),
   charge_prevision  NUMERIC(10, 0),
   comment           CHARACTER VARYING(255),
   end_date          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   goal              CHARACTER VARYING(255),
   name              CHARACTER VARYING(255)      NOT NULL,
-  start_date        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  status            INTEGER                     NOT NULL,
-  advancement       INTEGER                     NOT NULL,
-  budget_consumed   NUMERIC(19, 2),
-  budget_to_consume NUMERIC(19, 2),
-  charge_consumed   NUMERIC(10, 0)
+  start_date        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 
@@ -1349,7 +1369,6 @@ CREATE TABLE writeup (
 
 ALTER TABLE writeup
   OWNER TO postgres;
-
 
 --
 -- Name: action action_pkey; Type: CONSTRAINT; Schema: <tenant_schema_name>; Owner: postgres
@@ -3133,6 +3152,15 @@ ALTER TABLE ONLY construction_site_update_change_requests
 -- PostgreSQL database dump complete
 --
 
+
+-- populate with user (login:"Frodo"; password:"Baggins")
+INSERT INTO user_account (id, login, password_hash, password_salt, first_name, last_name) VALUES
+  ('73c60097-4c7c-4c74-a347-5f69fcaef9fb', 'Frodo',
+   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF', 'Frodo', 'Baggins');
+-- populate with user (login:"Bilbo"; password:"Baggins")
+INSERT INTO user_account (id, login, password_hash, password_salt, first_name, last_name) VALUES
+  ('73c60097-4c7c-4c74-a347-5f69fcaef9fb', 'Bilbo',
+   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF', 'Bilbo', 'Baggins');
 
 -- Populate with resources
 INSERT INTO resource (id, reference, name, type, last_version_id)

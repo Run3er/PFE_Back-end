@@ -1,23 +1,20 @@
-package projMngmntSaaS.domain.entities.projectLevel;
+package projMngmntSaaS.domain.entities.projectLevel.fixedDetails;
 
-import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectLevelArchivableContent;
-import projMngmntSaaS.domain.utils.UuidIdentifiable;
+import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.interfaces.IProjectLevelDetails;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
 /**
- * This provides common project level properties.
+ * This provides project level common fixed properties.
  */
 @MappedSuperclass
-public abstract class ProjectLevel implements UuidIdentifiable
+@Embeddable
+public abstract class ProjectLevelDetails implements IProjectLevelDetails
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected UUID id;
-
     @Column(nullable = false)
     protected String name;
 
@@ -35,10 +32,6 @@ public abstract class ProjectLevel implements UuidIdentifiable
 
     @Column(precision = 10)
     protected BigDecimal chargePrevision = new BigDecimal(0);
-
-    public UUID getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -95,6 +88,4 @@ public abstract class ProjectLevel implements UuidIdentifiable
     public void setChargePrevision(BigDecimal chargePrevision) {
         this.chargePrevision = chargePrevision;
     }
-
-    public abstract ProjectLevelArchivableContent getArchivableContent();
 }

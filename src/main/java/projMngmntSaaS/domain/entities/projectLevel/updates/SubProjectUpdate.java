@@ -2,9 +2,9 @@ package projMngmntSaaS.domain.entities.projectLevel.updates;
 
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * TODO
@@ -15,10 +15,6 @@ import java.util.UUID;
 @Entity
 public class SubProjectUpdate extends SubProjectArchivableContent
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected UUID id;
-
     @Column(nullable = false)
     private Date updateTime;
 

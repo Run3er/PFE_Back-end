@@ -5,7 +5,6 @@ import projMngmntSaaS.domain.entities.projectLevel.artifacts.ReunionPlanning;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Writeup;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
 import java.util.HashSet;
@@ -15,7 +14,6 @@ import java.util.Set;
  * This is an aggregation of {@link projMngmntSaaS.domain.entities.projectLevel.Project} archivable content.
  */
 @MappedSuperclass
-@Embeddable
 public class ProjectArchivableContent extends SubProjectArchivableContent
 {
     @ManyToMany(cascade = CascadeType.ALL)

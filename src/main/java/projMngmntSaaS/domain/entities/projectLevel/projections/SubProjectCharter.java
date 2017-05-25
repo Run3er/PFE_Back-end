@@ -24,9 +24,9 @@ public interface SubProjectCharter
 
     String getComment();
 
-    @Value("#{target.archivableContent.advancement}")
+    @Value("#{target.advancement}")
     BigDecimal getAdvancement();
 
-    @Value("#{target.archivableContent.status}")
+    @Value("#{target.status}")
     ProjectLevelStatus getStatus();
 }

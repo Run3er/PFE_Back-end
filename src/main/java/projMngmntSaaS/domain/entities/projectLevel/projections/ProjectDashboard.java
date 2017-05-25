@@ -13,6 +13,6 @@ import java.util.Map;
 @Projection(name = "dashboard", types = { Project.class })
 public interface ProjectDashboard extends SubProjectDashboard
 {
-    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.DashboardHelpers).getProjectLevelsAdvancement(target.subProjects)}")
+    @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getProjectLevelsAdvancement(target.subProjects)}")
     Collection<Map<String, String>> getSubProjectsAdvancement();
 }

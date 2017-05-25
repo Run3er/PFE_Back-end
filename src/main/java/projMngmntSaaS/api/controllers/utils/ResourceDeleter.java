@@ -61,7 +61,7 @@ public class ResourceDeleter
                         SubProject subProject = entityManager.find(SubProject.class, subResrcId);
                         deleteResource(SubProject.class, project.getSubProjects(), subProject);
                     }
-                    else deleteProjectArtifact(project.getArchivableContent());
+                    else deleteProjectArtifact(project);
                     break;
                 }
             case "subProjects":
@@ -71,13 +71,13 @@ public class ResourceDeleter
                         ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, subResrcId);
                         deleteResource(subProject, subProject.getConstructionSites(), constructionSite);
                     }
-                    else deleteSubProjectArtifact(subProject.getArchivableContent());
+                    else deleteSubProjectArtifact(subProject);
                     break;
                 }
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
                 if (constructionSite != null) {
-                    deleteConstructionSiteArtifact(constructionSite.getArchivableContent());
+                    deleteConstructionSiteArtifact(constructionSite);
                 }
                 break;
             default:

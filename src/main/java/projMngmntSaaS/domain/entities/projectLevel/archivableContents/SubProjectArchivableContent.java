@@ -3,14 +3,12 @@ package projMngmntSaaS.domain.entities.projectLevel.archivableContents;
 import projMngmntSaaS.domain.entities.enums.ProjectLevelStatus;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 
 /**
  * This is an aggregation of a {@link projMngmntSaaS.domain.entities.projectLevel.SubProject} archivable content.
  */
 @MappedSuperclass
-@Embeddable
 public class SubProjectArchivableContent extends ConstructionSiteArchivableContent
 {
     @Column(nullable = false)

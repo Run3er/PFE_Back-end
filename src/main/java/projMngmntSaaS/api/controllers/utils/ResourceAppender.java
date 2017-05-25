@@ -66,7 +66,7 @@ public class ResourceAppender
                     appendResources(project, ConstructionSite.class, project.getConstructionSites(),
                             subResources, appendedResourcesIDs);
                 }
-                else appendProjectArtifacts(project.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
+                else appendProjectArtifacts(project, subResourcePath, subResources, appendedResourcesIDs);
                 break;
             case "subProjects":
                 SubProject subProject = entityManager.find(SubProject.class, parentResrcId);
@@ -78,7 +78,7 @@ public class ResourceAppender
                     appendResources(subProject, ConstructionSite.class, subProject.getConstructionSites(),
                             subResources, appendedResourcesIDs);
                 }
-                else appendSubProjectArtifacts(subProject.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
+                else appendSubProjectArtifacts(subProject, subResourcePath, subResources, appendedResourcesIDs);
                 break;
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
@@ -86,7 +86,7 @@ public class ResourceAppender
                     throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 }
 
-                appendConstructionSiteArtifacts(constructionSite.getArchivableContent(), subResourcePath, subResources, appendedResourcesIDs);
+                appendConstructionSiteArtifacts(constructionSite, subResourcePath, subResources, appendedResourcesIDs);
                 break;
             default:
                 throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);

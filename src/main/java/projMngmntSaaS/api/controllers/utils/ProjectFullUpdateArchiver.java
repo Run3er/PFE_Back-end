@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
-import projMngmntSaaS.domain.entities.projectLevel.ProjectLevel;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ConstructionSiteArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
+import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectLevelArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.SubProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.CommunicationPlan;
@@ -99,23 +99,23 @@ public class ProjectFullUpdateArchiver
         projectRepository.save(project);
     }
 
-    private void archiveProjectLevelUpdate(ProjectLevel projectLevel, Date updateTime) {
+    private void archiveProjectLevelUpdate(ProjectLevelArchivableContent projectLevel, Date updateTime) {
         if (projectLevel instanceof Project) {
             Project project = (Project) projectLevel;
-            ProjectUpdate update = new ProjectUpdate(project.getArchivableContent(), updateTime);
-            archiveProjectUpdate(project.getArchivableContent(), update);
+            ProjectUpdate update = new ProjectUpdate(project, updateTime);
+            archiveProjectUpdate(project, update);
             project.getArchivedUpdates().add(update);
         }
         else if (projectLevel instanceof SubProject) {
             SubProject subProject = (SubProject) projectLevel;
-            SubProjectUpdate update = new SubProjectUpdate(subProject.getArchivableContent(), updateTime);
-            archiveSubProjectUpdate(subProject.getArchivableContent(), update);
+            SubProjectUpdate update = new SubProjectUpdate(subProject, updateTime);
+            archiveSubProjectUpdate(subProject, update);
             subProject.getArchivedUpdates().add(update);
         }
         else if (projectLevel instanceof ConstructionSite) {
             ConstructionSite constructionSite = (ConstructionSite) projectLevel;
-            ConstructionSiteUpdate update = new ConstructionSiteUpdate(constructionSite.getArchivableContent(), updateTime);
-            archiveConstructionSiteUpdate(constructionSite.getArchivableContent(), update);
+            ConstructionSiteUpdate update = new ConstructionSiteUpdate(constructionSite, updateTime);
+            archiveConstructionSiteUpdate(constructionSite, update);
             constructionSite.getArchivedUpdates().add(update);
         }
     }

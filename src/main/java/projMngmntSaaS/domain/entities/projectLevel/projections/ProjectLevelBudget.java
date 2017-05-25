@@ -15,9 +15,9 @@ public interface ProjectLevelBudget
 {
     BigDecimal getBudgetInitial();
 
-    @Value("#{target.archivableContent.budgetToConsume}")
+    @Value("#{target.budgetToConsume}")
     BigDecimal getBudgetToConsume();
 
-    @Value("#{target.archivableContent.budgetConsumed}")
+    @Value("#{target.budgetConsumed}")
     BigDecimal getBudgetConsumed();
 }

@@ -1,19 +1,25 @@
 package projMngmntSaaS.domain.entities.projectLevel.archivableContents;
 
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
+import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.ProjectLevelDetails;
+import projMngmntSaaS.domain.utils.UuidIdentifiable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
- * This is an aggregation of any {@link projMngmntSaaS.domain.entities.projectLevel.ProjectLevel} archivable content.
+ * This is an aggregation of any {@link ProjectLevelDetails} archivable content.
  */
 @MappedSuperclass
-@Embeddable
-public abstract class ProjectLevelArchivableContent
+public abstract class ProjectLevelArchivableContent implements UuidIdentifiable
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected UUID id;
+
     protected BigDecimal budgetToConsume = new BigDecimal(0);
 
     protected BigDecimal budgetConsumed = new BigDecimal(0);
@@ -69,6 +75,10 @@ public abstract class ProjectLevelArchivableContent
         this.milestones = new HashSet<>(projectLevelArchivableContent.milestones);
         this.todos = new HashSet<>(projectLevelArchivableContent.todos);
         this.humanResources = new HashSet<>(projectLevelArchivableContent.humanResources);
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public BigDecimal getBudgetToConsume() {
