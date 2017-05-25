@@ -21,15 +21,17 @@ import static java.util.stream.Collectors.groupingBy;
 public class ProjectionsHelper
 {
     public static BigDecimal getBudgetConsumedPercentage(ProjectLevel pl) {
+        if (pl.getBudgetToConsume().equals(BigDecimal.ZERO)) {
+            return null;
+        }
+        // else budgetToConsume is > 0
         BigDecimal budgetTotal = pl.getBudgetToConsume().add(pl.getBudgetConsumed());
-        return budgetTotal.compareTo(BigDecimal.ZERO) == 0 ?
-                BigDecimal.ZERO :
-                pl.getBudgetConsumed().multiply(new BigDecimal(100)).divide(budgetTotal, BigDecimal.ROUND_CEILING);
+        return pl.getBudgetConsumed().multiply(new BigDecimal(100)).divide(budgetTotal, BigDecimal.ROUND_CEILING);
     }
 
     public static BigDecimal getBudgetPrevisionGapPercentage(ProjectLevel pl) {
         return pl.getBudgetInitial().compareTo(BigDecimal.ZERO) == 0 ?
-                BigDecimal.ZERO :
+                null :
                 pl.getBudgetConsumed().add(pl.getBudgetToConsume()).subtract(pl.getBudgetInitial()).multiply(new BigDecimal(100)).divide(pl.getBudgetInitial(), BigDecimal.ROUND_CEILING);
     }
 
@@ -54,7 +56,7 @@ public class ProjectionsHelper
                         .sum()
         );
         return pl.getChargePrevision().compareTo(BigDecimal.ZERO) == 0 ?
-                BigDecimal.ZERO :
+                null :
                 pl.getChargeConsumed().add(chargeToConsume).subtract(pl.getChargePrevision()).multiply(new BigDecimal(100)).divide(pl.getChargePrevision(), BigDecimal.ROUND_CEILING);
     }
 
