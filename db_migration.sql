@@ -1,14 +1,37 @@
 -- create global schema (for administrator users)
 CREATE SCHEMA IF NOT EXISTS tenants_global;
+
+-- SET THE <tenant_schema_name> HERE  !
+SET search_path = tenants_global;
+
 -- create tenants table inside
-CREATE TABLE IF NOT EXISTS tenants_global.tenant
+CREATE TABLE IF NOT EXISTS tenant
 (
   id     UUID                   NOT NULL PRIMARY KEY,
   pseudo CHARACTER VARYING(255) NOT NULL
 );
+ALTER TABLE tenant
+  OWNER TO tenants_global;
 -- populate with tenants
-INSERT INTO tenants_global.tenant (id, pseudo) VALUES ('43d44eae-cd10-4ffb-97e1-c3e189119659', 'tenant_a');
-INSERT INTO tenants_global.tenant (id, pseudo) VALUES ('b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50', 'tenant_b');
+INSERT INTO tenant (id, pseudo) VALUES ('43d44eae-cd10-4ffb-97e1-c3e189119659', 'tenant_a');
+INSERT INTO tenant (id, pseudo) VALUES ('b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50', 'tenant_b');
+
+-- create users table inside
+CREATE TABLE IF NOT EXISTS user_account (
+  id            UUID                  NOT NULL,
+  first_name    CHARACTER VARYING(40) NOT NULL,
+  last_name     CHARACTER VARYING(40) NOT NULL,
+  login         CHARACTER VARYING(10) NOT NULL,
+  password_hash BYTEA                 NOT NULL,
+  password_salt BYTEA                 NOT NULL
+);
+ALTER TABLE user_account
+  OWNER TO tenants_global;
+-- populate with user (login:"Frodo"; password:"Baggins")
+INSERT INTO tenants_global.user_account (id, login, password_hash, password_salt, first_name, last_name) VALUES
+  ('73c60097-4c7c-4c74-a347-5f69fcaef9fb', 'Frodo',
+   E'\\x6DB3B66707B40240B7DD71B549AE1536EF6E52C9F0FDCCE781F9AC1EEB574C0B', E'\\x0A2EBE7A87F3504A2C6F8846E7EDA2AF',
+   'Frodo', 'Baggins');
 
 -- create mock-intended-only schema (needed for hibernate initialization)
 CREATE SCHEMA IF NOT EXISTS default_mock_tenant;
@@ -17,12 +40,14 @@ CREATE SCHEMA IF NOT EXISTS default_mock_tenant;
 CREATE SCHEMA IF NOT EXISTS "43d44eae-cd10-4ffb-97e1-c3e189119659";
 CREATE SCHEMA IF NOT EXISTS "b37bfdf1-1a7f-466e-bcb4-6ebf6d53eb50";
 
---
--- PostgreSQL database dump
---
 
 -- SET THE <tenant_schema_name> HERE  !
 SET search_path = "43d44eae-cd10-4ffb-97e1-c3e189119659";
+
+
+--
+-- PostgreSQL database dump
+--
 
 -- Dumped from database version 9.6.2
 -- Dumped by pg_dump version 9.6.2
@@ -1281,19 +1306,6 @@ CREATE TABLE sub_project_update_todos (
 
 
 ALTER TABLE sub_project_update_todos
-  OWNER TO postgres;
-
---
--- Name: tenant; Type: TABLE; Schema: <tenant_schema_name>; Owner: postgres
---
-
-CREATE TABLE tenant (
-  id     UUID                   NOT NULL,
-  pseudo CHARACTER VARYING(100) NOT NULL
-);
-
-
-ALTER TABLE tenant
   OWNER TO postgres;
 
 --
