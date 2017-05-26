@@ -1,4 +1,4 @@
-package projMngmntSaaS.api;
+package projMngmntSaaS;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,9 +11,9 @@ import projMngmntSaaS.domain.entities.Tenant;
  */
 @SpringBootApplication
 @EntityScan(basePackageClasses = Tenant.class)
-public class ApiConfiguration {
-
+public class AppConfiguration
+{
     public static void main(String[] args) {
-        SpringApplication.run(ApiConfiguration.class, args);
+        SpringApplication.run(AppConfiguration.class, args);
     }
 }

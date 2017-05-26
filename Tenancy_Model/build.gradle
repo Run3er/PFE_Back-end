@@ -1,5 +1,5 @@
 jar {
-    appendix = 'domain'
+    appendix = 'Tenancy_Model'
     version = '0.0.1-SNAPSHOT'
 }
 

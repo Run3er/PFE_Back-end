@@ -3,7 +3,7 @@ plugins {
 }
 
 jar {
-    appendix = 'api'
+    appendix = 'Public_API'
     version = '0.0.1-SNAPSHOT'
 }
 
@@ -12,11 +12,11 @@ repositories {
 }
 
 dependencies {
+    compile project(":Tenancy_Model")
     compile "org.springframework.boot:spring-boot-devtools"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-data-rest"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
-    compile project(":domain")
     compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
 }
