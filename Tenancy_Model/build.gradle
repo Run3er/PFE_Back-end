@@ -1,0 +1,12 @@
+jar {
+    appendix = 'Tenancy_Model'
+    version = '0.0.1-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.eclipse.persistence:javax.persistence:2.1.1"
+}

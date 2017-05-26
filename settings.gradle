@@ -1,0 +1,4 @@
+rootProject.name = 'proj-mngmnt-saas'
+
+include 'Tenancy_Model'
+include 'Public_API'
