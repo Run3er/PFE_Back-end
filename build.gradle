@@ -1,4 +1,5 @@
 ext {
+    // TODO: make use of (globalize) following
     springBootVersion = '1.5.2.RELEASE'
 }
 

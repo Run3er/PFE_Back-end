@@ -9,4 +9,5 @@ repositories {
 
 dependencies {
     compile "org.eclipse.persistence:javax.persistence:2.1.1"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.8.0"
 }
