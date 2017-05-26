@@ -1,4 +1,4 @@
-rootProject.name = 'proj-mngmnt-saas'
+rootProject.name = 'projMngmntSaaS'
 
-include 'Tenancy_Model'
-include 'Public_API'
+include 'tenancyModel'
+include 'publicAPI'

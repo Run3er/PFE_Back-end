@@ -3,7 +3,7 @@ plugins {
 }
 
 jar {
-    appendix = 'Public_API'
+    appendix = 'publicAPI'
     version = '0.0.1-SNAPSHOT'
 }
 
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile project(":Tenancy_Model")
+    compile project(":tenancyModel")
     compile "org.springframework.boot:spring-boot-devtools"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
