@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
@@ -40,20 +39,6 @@ public class ResourceAppender
         List<UUID> appendedResourcesIDs = new ArrayList<>();
 
         switch (parentResourcePath) {
-            case "entities":
-                ProjectsEntity entity = entityManager.find(ProjectsEntity.class, parentResrcId);
-                if (entity == null) {
-                    throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
-                }
-
-                if ("projects".equals(subResourcePath)) {
-                    appendResources(ProjectsEntity.class, Project.class, entity.getProjects(),
-                            subResources, appendedResourcesIDs);
-                }
-                else {
-                    throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
-                }
-                break;
             case "projects":
                 Project project = entityManager.find(Project.class, parentResrcId);
                 if (project == null) {

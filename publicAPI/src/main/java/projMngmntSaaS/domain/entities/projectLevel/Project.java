@@ -1,7 +1,6 @@
 package projMngmntSaaS.domain.entities.projectLevel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.ProjectDetails;
 import projMngmntSaaS.domain.entities.projectLevel.fixedDetails.interfaces.IProjectDetails;
@@ -16,7 +15,6 @@ import java.util.Set;
 
 /**
  * A project is the main element for a project's management.
- * A project always belongs one to {@link projMngmntSaaS.domain.entities.ProjectsEntity}.
  */
 @Entity
 public class Project extends ProjectArchivableContent implements IProjectDetails, ProjectLevel
@@ -24,10 +22,6 @@ public class Project extends ProjectArchivableContent implements IProjectDetails
     @Embedded
     @JsonIgnore
     private ProjectDetails fixedDetails = new ProjectDetails();
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    // Exact field name ('entity') mappedBy ProjectsEntity association
-    private ProjectsEntity entity;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubProject> subProjects = new HashSet<>();
@@ -136,14 +130,6 @@ public class Project extends ProjectArchivableContent implements IProjectDetails
 
     public void setHistory_decisions(String history_decisions) {
         this.fixedDetails.setHistory_decisions(history_decisions);
-    }
-
-    public ProjectsEntity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(ProjectsEntity entity) {
-        this.entity = entity;
     }
 
     public Set<SubProject> getSubProjects() {

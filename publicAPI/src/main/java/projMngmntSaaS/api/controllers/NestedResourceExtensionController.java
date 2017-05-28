@@ -46,7 +46,6 @@ public class NestedResourceExtensionController
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
     // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
     @RequestMapping(method = POST, consumes = "application/json", value = {
-            "**/entities/{parentResourceId}/projects",
             "**/projects/{parentResourceId}/subProjects",
             "**/projects/{parentResourceId}/constructionSites",
             "**/subProjects/{parentResourceId}/constructionSites",
@@ -122,7 +121,6 @@ public class NestedResourceExtensionController
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
     // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
     @RequestMapping(method = DELETE, value = {
-            "**/entities/{parentResourceId}/projects/{subResourceId}",
             "**/projects/{parentResourceId}/subProjects/{subResourceId}",
             "**/projects/{parentResourceId}/constructionSites/{subResourceId}",
             "**/subProjects/{parentResourceId}/constructionSites/{subResourceId}",

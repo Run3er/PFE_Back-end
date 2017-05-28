@@ -3,7 +3,6 @@ package projMngmntSaaS.api.controllers.utils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import projMngmntSaaS.domain.entities.ProjectsEntity;
 import projMngmntSaaS.domain.entities.projectLevel.ConstructionSite;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.domain.entities.projectLevel.SubProject;
@@ -42,18 +41,6 @@ public class ResourceDeleter
         this.subResrcId = subResrcId;
 
         switch (parentResourcePath) {
-            case "entities":
-                ProjectsEntity entity = entityManager.find(ProjectsEntity.class, parentResrcId);
-                if (entity != null) {
-                    if ("projects".equals(subResourcePath)) {
-                        Project project = entityManager.find(Project.class, subResrcId);
-                        deleteResource(ProjectsEntity.class, entity.getProjects(), project);
-                    }
-                    else {
-                        throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
-                    }
-                    break;
-                }
             case "projects":
                 Project project = entityManager.find(Project.class, parentResrcId);
                 if (project != null) {
