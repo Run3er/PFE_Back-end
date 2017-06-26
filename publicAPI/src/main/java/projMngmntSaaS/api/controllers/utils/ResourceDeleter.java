@@ -48,9 +48,14 @@ public class ResourceDeleter
                         SubProject subProject = entityManager.find(SubProject.class, subResrcId);
                         deleteResource(SubProject.class, project.getSubProjects(), subProject);
                     }
+                    else if ("constructionSites".equals(subResourcePath)) {
+                        ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, subResrcId);
+                        deleteResource(project, project.getConstructionSites(), constructionSite);
+                    }
                     else deleteProjectArtifact(project);
-                    break;
                 }
+                else throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
+                break;
             case "subProjects":
                 SubProject subProject = entityManager.find(SubProject.class, parentResrcId);
                 if (subProject != null) {
@@ -59,13 +64,15 @@ public class ResourceDeleter
                         deleteResource(subProject, subProject.getConstructionSites(), constructionSite);
                     }
                     else deleteSubProjectArtifact(subProject);
-                    break;
                 }
+                else throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
+                break;
             case "constructionSites":
                 ConstructionSite constructionSite = entityManager.find(ConstructionSite.class, parentResrcId);
                 if (constructionSite != null) {
                     deleteConstructionSiteArtifact(constructionSite);
                 }
+                else throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
                 break;
             default:
                 throw new IllegalArgumentException(URI_RESRC_INVALID_MSG);
