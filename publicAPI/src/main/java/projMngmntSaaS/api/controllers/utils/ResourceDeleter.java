@@ -77,15 +77,15 @@ public class ResourceDeleter
             case "reunionPlannings":
                 ReunionPlanning reunionPlanning = entityManager.find(ReunionPlanning.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getReunionPlannings(), reunionPlanning);
-                break;
+                return;
             case "communicationPlans":
                 CommunicationPlan communicationPlan = entityManager.find(CommunicationPlan.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getCommunicationPlans(), communicationPlan);
-                break;
+                return;
             case "writeups":
                 Writeup writeup = entityManager.find(Writeup.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getWriteups(), writeup);
-                break;
+                return;
         }
         // case default must be handled by this method
         deleteSubProjectArtifact(parentResrc);
@@ -101,39 +101,39 @@ public class ResourceDeleter
             case "actions":
                 Action action = entityManager.find(Action.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getActions(), action);
-                break;
+                return;
             case "risks":
                 Risk risk = entityManager.find(Risk.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getRisks(), risk);
-                break;
+                return;
             case "changeRequests":
                 ChangeRequest changeRequest = entityManager.find(ChangeRequest.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getChangeRequests(), changeRequest);
-                break;
+                return;
             case "pendingIssues":
                 PendingIssue pendingIssue = entityManager.find(PendingIssue.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getPendingIssues(), pendingIssue);
-                break;
+                return;
             case "resources":
                 Resource resource = entityManager.find(Resource.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getResources(), resource);
-                break;
+                return;
             case "documents":
                 Document document = entityManager.find(Document.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getDocuments(), document);
-                break;
+                return;
             case "milestones":
                 Milestone milestone = entityManager.find(Milestone.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getMilestones(), milestone);
-                break;
+                return;
             case "todos":
                 Todo todo = entityManager.find(Todo.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getTodos(), todo);
-                break;
+                return;
             case "humanResources":
                 HumanResource humanResource = entityManager.find(HumanResource.class, subResrcId);
                 deleteResource(parentResrc, parentResrc.getHumanResources(), humanResource);
-                break;
+                return;
             default:
                 throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
         }

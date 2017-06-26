@@ -87,15 +87,15 @@ public class ResourceAppender
             case "reunionPlannings":
                 appendResources(parentResrc, ReunionPlanning.class, parentResrc.getReunionPlannings(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "communicationPlans":
                 appendResources(parentResrc, CommunicationPlan.class, parentResrc.getCommunicationPlans(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "writeups":
                 appendResources(parentResrc, Writeup.class, parentResrc.getWriteups(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
         }
         // case default must be handled by this method
         appendSubProjectArtifacts(parentResrc, subResourcePath, subResources, appendedResourcesIDs);
@@ -113,39 +113,39 @@ public class ResourceAppender
             case "actions":
                 appendResources(parentResrc, Action.class, parentResrc.getActions(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "risks":
                 appendResources(parentResrc, Risk.class, parentResrc.getRisks(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "changeRequests":
                 appendResources(parentResrc, ChangeRequest.class, parentResrc.getChangeRequests(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "pendingIssues":
                 appendResources(parentResrc, PendingIssue.class, parentResrc.getPendingIssues(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "resources":
                 appendResources(parentResrc, Resource.class, parentResrc.getResources(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "documents":
                 appendResources(parentResrc, Document.class, parentResrc.getDocuments(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "milestones":
                 appendResources(parentResrc, Milestone.class, parentResrc.getMilestones(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "todos":
                 appendResources(parentResrc, Todo.class, parentResrc.getTodos(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             case "humanResources":
                 appendResources(parentResrc, HumanResource.class, parentResrc.getHumanResources(),
                         subResources, appendedResourcesIDs);
-                break;
+                return;
             default:
                 throw new IllegalArgumentException(URI_NESTED_RESRC_INVALID_MSG);
         }
