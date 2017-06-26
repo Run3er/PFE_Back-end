@@ -28,9 +28,7 @@ public interface SubProjectCharter
 
     BigInteger getChargePrevision();
 
-    @Value("#{target.advancement}")
     BigInteger getAdvancement();
 
-    @Value("#{target.status}")
     ProjectLevelStatus getStatus();
 }

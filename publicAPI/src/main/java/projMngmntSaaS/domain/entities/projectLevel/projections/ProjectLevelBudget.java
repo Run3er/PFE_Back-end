@@ -15,9 +15,7 @@ public interface ProjectLevelBudget
 {
     BigInteger getBudgetInitial();
 
-    @Value("#{target.budgetToConsume}")
     BigInteger getBudgetToConsume();
 
-    @Value("#{target.budgetConsumed}")
     BigInteger getBudgetConsumed();
 }

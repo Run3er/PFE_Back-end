@@ -32,13 +32,10 @@ public interface SubProjectDashboard
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getChargePrevisionGapPercentage(target)}")
     BigInteger getChargePrevisionGap();
 
-    @Value("#{target.advancement}")
     int getAdvancement();
 
-    @Value("#{target.status}")
     ProjectLevelStatus getStatus();
 
-    @Value("#{target.milestones}")
     Collection<Milestone> getMilestones();
 
     @Value("#{T(projMngmntSaaS.domain.entities.projectLevel.projections.utils.ProjectionsHelper).getActionsOngoingInTimeOrNotCount(target.actions)}")
