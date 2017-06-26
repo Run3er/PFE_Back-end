@@ -24,6 +24,10 @@ public interface SubProjectCharter
 
     String getComment();
 
+    BigInteger getBudgetInitial();
+
+    BigInteger getChargePrevision();
+
     @Value("#{target.advancement}")
     BigInteger getAdvancement();
 
