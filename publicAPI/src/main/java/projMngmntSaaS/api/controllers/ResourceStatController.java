@@ -7,12 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
+import projMngmntSaaS.api.controllers.utils.ResourceRecursiveRetreiver;
 import projMngmntSaaS.domain.entities.enums.ActionStatus;
-import projMngmntSaaS.domain.entities.projectLevel.archivableContents.ProjectLevelArchivableContent;
 import projMngmntSaaS.domain.entities.projectLevel.artifacts.Action;
 import projMngmntSaaS.repositories.ConstructionSiteRepository;
-import projMngmntSaaS.repositories.ProjectRepository;
-import projMngmntSaaS.repositories.SubProjectRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -26,14 +24,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping(method = GET)
 public class ResourceStatController
 {
-    private final ProjectRepository projectRepository;
-    private final SubProjectRepository subProjectRepository;
+    private final ResourceRecursiveRetreiver resourceRecursiveRetreiver;
     private final ConstructionSiteRepository constructionSiteRepository;
 
     @Autowired
-    public ResourceStatController(ProjectRepository projectRepository, SubProjectRepository subProjectRepository, ConstructionSiteRepository constructionSiteRepository) {
-        this.projectRepository = projectRepository;
-        this.subProjectRepository = subProjectRepository;
+    public ResourceStatController(ResourceRecursiveRetreiver resourceRecursiveRetreiver, ConstructionSiteRepository constructionSiteRepository) {
+        this.resourceRecursiveRetreiver = resourceRecursiveRetreiver;
         this.constructionSiteRepository = constructionSiteRepository;
     }
 
@@ -49,21 +45,19 @@ public class ResourceStatController
         String[] UriParts = restOfTheUri.split("/");
         String parentResourcePath = UriParts[UriParts.length - 4];
 
-        ProjectLevelArchivableContent archivableContent;
-        if ("projects".equals(parentResourcePath)) {
-            archivableContent = projectRepository.findOne(parentResourceId);
-        }
-        else if ("subProjects".equals(parentResourcePath)) {
-            archivableContent = subProjectRepository.findOne(parentResourceId);
+        String subResourcePath = "actions";
+        List<Action> actions;
+        if ("projects".equals(parentResourcePath) || "subProjects".equals(parentResourcePath)) {
+            actions = (List<Action>) resourceRecursiveRetreiver.retrieve(parentResourcePath, parentResourceId, subResourcePath).get(subResourcePath);
         }
         else if ("constructionSites".equals(parentResourcePath)) {
-            archivableContent = constructionSiteRepository.findOne(parentResourceId);
+            // Set<> to List<>
+            actions = new ArrayList<>(constructionSiteRepository.findOne(parentResourceId).getActions());
         }
         else {
             throw new IllegalArgumentException("Parent resource unhandled. Check against controller request mapping values.");
         }
 
-        Set<Action> actions = archivableContent.getActions();
         int actionsOngoingCount = 0;
         int actionsOngoingInTimeCount = 0;
         int actionsOngoingLateCount = 0;

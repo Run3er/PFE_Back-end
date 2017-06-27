@@ -1,6 +1,7 @@
 package projMngmntSaaS.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,17 +12,14 @@ import org.springframework.web.servlet.HandlerMapping;
 import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.api.controllers.utils.ResourceAppender;
 import projMngmntSaaS.api.controllers.utils.ResourceDeleter;
+import projMngmntSaaS.api.controllers.utils.ResourceRecursiveRetreiver;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
 import projMngmntSaaS.repositories.ProjectRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * API controller for customizing Spring Data REST endpoints.
@@ -33,14 +31,19 @@ public class NestedResourceExtensionController
     private final ProjectFullUpdateArchiver projectFullUpdateArchiver;
     private final ResourceAppender resourceAppender;
     private final ResourceDeleter resourceDeleter;
+    private final ResourceRecursiveRetreiver resourceRecursiveRetreiver;
+    @Value("${management.address}")
+    private String hostAddress;
+    @Value("${server.port}")
+    private String hostPort;
 
     @Autowired
-    public NestedResourceExtensionController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver,
-                                             ResourceAppender resourceAppender, ResourceDeleter resourceDeleter) {
+    public NestedResourceExtensionController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver, ResourceAppender resourceAppender, ResourceDeleter resourceDeleter, ResourceRecursiveRetreiver resourceRecursiveRetreiver) {
         this.projectRepository = projectRepository;
         this.projectFullUpdateArchiver = projectFullUpdateArchiver;
         this.resourceAppender = resourceAppender;
         this.resourceDeleter = resourceDeleter;
+        this.resourceRecursiveRetreiver = resourceRecursiveRetreiver;
     }
 
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
@@ -99,23 +102,11 @@ public class NestedResourceExtensionController
         List<UUID> appendedUuids;
         try {
             appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
-            return new ResponseEntity<>(appendedUuids,  HttpStatus.CREATED);
+            return new ResponseEntity<>(appendedUuids, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
-    public ResponseEntity<?> archivePendingUpdate(@PathVariable UUID projectId) {
-        Project project = projectRepository.findOne(projectId);
-
-        if (project == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        projectFullUpdateArchiver.archive(project, new Date());
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
@@ -178,5 +169,66 @@ public class NestedResourceExtensionController
             e.printStackTrace();
             return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Seems Spring Data REST @RepositoryRestController can't work on overriding behavior with regex path,
+    // since conflicts are raised instead. Thus, each path literal is specifies explicitly in the mappings
+    @RequestMapping(method = GET, value = {
+            "**/projects/{parentResourceId}/constructionSites",
+
+            "**/projects/{parentResourceId}/actions",
+            "**/projects/{parentResourceId}/risks",
+            "**/projects/{parentResourceId}/changeRequests",
+            "**/projects/{parentResourceId}/pendingIssues",
+            "**/projects/{parentResourceId}/resources",
+            "**/projects/{parentResourceId}/todos",
+            "**/projects/{parentResourceId}/humanResources",
+
+            "**/subProjects/{parentResourceId}/actions",
+            "**/subProjects/{parentResourceId}/risks",
+            "**/subProjects/{parentResourceId}/changeRequests",
+            "**/subProjects/{parentResourceId}/pendingIssues",
+            "**/subProjects/{parentResourceId}/resources",
+            "**/subProjects/{parentResourceId}/todos",
+            "**/subProjects/{parentResourceId}/humanResources"
+    })
+    public ResponseEntity<?> getAllSubResources(@PathVariable UUID parentResourceId, HttpServletRequest request) {
+        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String[] UriParts = restOfTheUri.split("/");
+        String subResourcePath = UriParts[UriParts.length - 1];
+        String parentResourcePath = UriParts[UriParts.length - 3];
+
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> recursivelyRetrievedResources;
+        try {
+            recursivelyRetrievedResources = resourceRecursiveRetreiver.retrieve(parentResourcePath, parentResourceId, subResourcePath);
+            // Prepare API response
+            // _embedded
+            response.put("_embedded", recursivelyRetrievedResources);
+            // _links
+            Map<String, Object> link = new HashMap<>();
+            Map<String, Object> self = new HashMap<>();
+            self.put("href", "http://" + hostAddress + ":" + hostPort + "/" + parentResourcePath + "/" +
+                    parentResourceId + "/" + subResourcePath);
+            link.put("self", self);
+            response.put("_links", link);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = POST, value = "/**/projects/{projectId}/archivedUpdates")
+    public ResponseEntity<?> archivePendingUpdate(@PathVariable UUID projectId) {
+        Project project = projectRepository.findOne(projectId);
+
+        if (project == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        projectFullUpdateArchiver.archive(project, new Date());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
