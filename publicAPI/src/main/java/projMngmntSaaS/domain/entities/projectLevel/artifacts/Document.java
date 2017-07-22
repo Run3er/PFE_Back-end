@@ -1,5 +1,7 @@
 package projMngmntSaaS.domain.entities.projectLevel.artifacts;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -14,8 +16,13 @@ public class Document extends ProjectLevelArtifact<Document>
     @Column(nullable = false)
     private String name;
 
+    @JsonIgnore
     @Column(nullable = false, length = 260)
-    private String osPath;
+    private String osId;
+
+    @JsonIgnore
+    @Column(nullable = false, length = 260)
+    private String contentType;
 
     public Document() {
         // no-arg constructor for ORM (due to reflection use)
@@ -30,14 +37,14 @@ public class Document extends ProjectLevelArtifact<Document>
         Document document = (Document) o;
 
         if (name != null ? !name.equals(document.name) : document.name != null) return false;
-        return osPath != null ? osPath.equals(document.osPath) : document.osPath == null;
+        return osId != null ? osId.equals(document.osId) : document.osId == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (osPath != null ? osPath.hashCode() : 0);
+        result = 31 * result + (osId != null ? osId.hashCode() : 0);
         return result;
     }
 
@@ -49,8 +56,20 @@ public class Document extends ProjectLevelArtifact<Document>
         this.name = name;
     }
 
-    public void setOsPath(String osPath) {
-        this.osPath = osPath;
+    public void setOsId(String osId) {
+        this.osId = osId;
+    }
+
+    public String getOsId() {
+        return osId;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override
@@ -59,7 +78,7 @@ public class Document extends ProjectLevelArtifact<Document>
 
         shallowCloneRootsInto(clone);
         clone.name = name;
-        clone.osPath = osPath;
+        clone.osId = osId;
 
         return clone;
     }

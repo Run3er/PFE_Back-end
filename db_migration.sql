@@ -444,7 +444,8 @@ CREATE TABLE document (
   id uuid NOT NULL,
   reference uuid NOT NULL,
   name character varying(255) NOT NULL,
-  os_path character varying(260) NOT NULL,
+  os_id character varying(260) NOT NULL,
+  content_type character varying(260) NOT NULL,
   last_version_id uuid
 );
 

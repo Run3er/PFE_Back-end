@@ -1,5 +1,6 @@
 package projMngmntSaaS.api.controllers;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -8,15 +9,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import projMngmntSaaS.api.controllers.utils.ProjectFullUpdateArchiver;
 import projMngmntSaaS.api.controllers.utils.ResourceAppender;
 import projMngmntSaaS.api.controllers.utils.ResourceDeleter;
 import projMngmntSaaS.api.controllers.utils.ResourceRecursiveRetreiver;
 import projMngmntSaaS.domain.entities.projectLevel.Project;
+import projMngmntSaaS.domain.entities.projectLevel.artifacts.Document;
+import projMngmntSaaS.repositories.DocumentRepository;
 import projMngmntSaaS.repositories.ProjectRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -28,6 +37,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class NestedResourceExtensionController
 {
     private final ProjectRepository projectRepository;
+    private final DocumentRepository documentRepository;
     private final ProjectFullUpdateArchiver projectFullUpdateArchiver;
     private final ResourceAppender resourceAppender;
     private final ResourceDeleter resourceDeleter;
@@ -38,8 +48,9 @@ public class NestedResourceExtensionController
     private String hostPort;
 
     @Autowired
-    public NestedResourceExtensionController(ProjectRepository projectRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver, ResourceAppender resourceAppender, ResourceDeleter resourceDeleter, ResourceRecursiveRetreiver resourceRecursiveRetreiver) {
+    public NestedResourceExtensionController(ProjectRepository projectRepository, DocumentRepository documentRepository, ProjectFullUpdateArchiver projectFullUpdateArchiver, ResourceAppender resourceAppender, ResourceDeleter resourceDeleter, ResourceRecursiveRetreiver resourceRecursiveRetreiver) {
         this.projectRepository = projectRepository;
+        this.documentRepository = documentRepository;
         this.projectFullUpdateArchiver = projectFullUpdateArchiver;
         this.resourceAppender = resourceAppender;
         this.resourceDeleter = resourceDeleter;
@@ -58,7 +69,7 @@ public class NestedResourceExtensionController
             "**/projects/{parentResourceId}/changeRequests",
             "**/projects/{parentResourceId}/pendingIssues",
             "**/projects/{parentResourceId}/resources",
-            "**/projects/{parentResourceId}/documents",
+//            "**/projects/{parentResourceId}/documents",
             "**/projects/{parentResourceId}/milestones",
             "**/projects/{parentResourceId}/todos",
             "**/projects/{parentResourceId}/reunionPlannings",
@@ -71,7 +82,7 @@ public class NestedResourceExtensionController
             "**/subProjects/{parentResourceId}/changeRequests",
             "**/subProjects/{parentResourceId}/pendingIssues",
             "**/subProjects/{parentResourceId}/resources",
-            "**/subProjects/{parentResourceId}/documents",
+//            "**/subProjects/{parentResourceId}/documents",
             "**/subProjects/{parentResourceId}/milestones",
             "**/subProjects/{parentResourceId}/todos",
             "**/subProjects/{parentResourceId}/reunionPlannings",
@@ -84,7 +95,7 @@ public class NestedResourceExtensionController
             "**/constructionSites/{parentResourceId}/changeRequests",
             "**/constructionSites/{parentResourceId}/pendingIssues",
             "**/constructionSites/{parentResourceId}/resources",
-            "**/constructionSites/{parentResourceId}/documents",
+//            "**/constructionSites/{parentResourceId}/documents",
             "**/constructionSites/{parentResourceId}/milestones",
             "**/constructionSites/{parentResourceId}/todos",
             "**/constructionSites/{parentResourceId}/reunionPlannings",
@@ -230,5 +241,91 @@ public class NestedResourceExtensionController
         projectFullUpdateArchiver.archive(project, new Date());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(method = POST, value = {
+            "**/constructionSites/{parentResourceId}/documents",
+            "**/projects/{parentResourceId}/documents",
+            "**/subProjects/{parentResourceId}/documents"
+    })
+    public ResponseEntity<?> documentUpload(@RequestParam("file") MultipartFile file,
+                                            @PathVariable UUID parentResourceId, HttpServletRequest request) {
+        String restOfTheUri = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String[] UriParts = restOfTheUri.split("/");
+        String subResourcePath = UriParts[UriParts.length - 1]; // 'documents'
+        String parentResourcePath = UriParts[UriParts.length - 3];
+
+        // Persist file on disk
+        String filePath = System.getProperty("user.dir") + File.separator + "pm-uploads" + File.separator + parentResourceId + File.separator;
+        String nonce = null;
+        int tries = 0;
+        while (tries < 5) {
+            tries++;
+            nonce = UUID.randomUUID().toString();
+            try {
+                File targetFile = new File(filePath + nonce);
+                File parent = targetFile.getParentFile();
+                // Create file path recursively
+                if (!targetFile.getParentFile().exists() && !parent.mkdirs()) {
+                    throw new IllegalStateException("Couldn't create dir: " + parent);
+                }
+                file.transferTo(targetFile);
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (tries >= 5) {
+            Map<String, String> response = new HashMap<>();
+            response.put("Error", "Uploaded file persistence failed.");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Persist on database
+        Document document = new Document();
+        document.setName(file.getOriginalFilename());
+        document.setOsId(nonce);
+        document.setContentType(file.getContentType());
+        Collection<Document> subResources = new ArrayList<>();
+        subResources.add(document);
+        List<UUID> appendedUuids;
+        try {
+            appendedUuids = resourceAppender.append(parentResourcePath, parentResourceId, subResourcePath, subResources);
+            return new ResponseEntity<>(appendedUuids, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = GET, value = {
+            "**/constructionSites/{parentResourceId}/documents/{subResourceId}",
+            "**/projects/{parentResourceId}/documents/{subResourceId}",
+            "**/subProjects/{parentResourceId}/documents/{subResourceId}"
+    })
+    public ResponseEntity<?> documentUpload(@PathVariable UUID subResourceId, HttpServletResponse response,
+                                            @PathVariable UUID parentResourceId) {
+        // Retrieve path from database
+        Document document = documentRepository.getOne(subResourceId);
+        if (document == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Retrieve file from disk
+        String filePath = document.getOsId();
+        File file = new File(System.getProperty("user.dir") + File.separator + "pm-uploads" + File.separator + parentResourceId + File.separator + filePath);
+        try {
+            IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+            response.setContentType(document.getContentType());
+            response.setHeader("X-File-Name", document.getName());
+            response.setHeader("Access-Control-Expose-Headers", "X-File-Name");
+            response.flushBuffer();
+        } catch (IOException ex) {
+            System.out.println("Error writing file to output stream. Filename was '" + filePath + "'");
+            ex.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

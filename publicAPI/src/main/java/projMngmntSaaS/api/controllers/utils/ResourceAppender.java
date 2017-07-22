@@ -154,17 +154,22 @@ public class ResourceAppender
     private <T, U extends UuidIdentifiable> void appendResources(T parentResource, Class<U> subResourcesType, Collection<U> appendableCollection, Collection<?> subResources, Collection<UUID> appendedResourcesIDs) {
         ObjectMapper mapper = new ObjectMapper();
         for (Object subResource : subResources) {
-            // TODO: remove & correct behavior for transactional complex entry appending
-            LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap<String, String>) subResource;
-            if (linkedHashMap.get("supervisor") != null) {
-                linkedHashMap.remove("supervisor");
-            }
-
             U concreteSubResource = null;
-            try {
-                concreteSubResource = mapper.convertValue(subResource, subResourcesType);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+            if (!subResourcesType.isInstance(subResource)) {
+                // TODO: remove & correct behavior for transactional complex entry appending
+                LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap<String, String>) subResource;
+                if (linkedHashMap.get("supervisor") != null) {
+                    linkedHashMap.remove("supervisor");
+                }
+
+                try {
+                    concreteSubResource = mapper.convertValue(subResource, subResourcesType);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                concreteSubResource = (U) subResource;
             }
 
             // TODO: remove & correct behavior for transactional complex entry appending

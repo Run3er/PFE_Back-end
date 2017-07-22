@@ -13,6 +13,8 @@ import projMngmntSaaS.domain.entities.projectLevel.artifacts.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ public class ResourceDeleter
 
     private String subResourcePath;
     private UUID subResrcId;
+    private UUID parentResrcId;
 
 
     @Transactional
@@ -39,6 +42,7 @@ public class ResourceDeleter
             throws IllegalArgumentException {
         this.subResourcePath = subResourcePath;
         this.subResrcId = subResrcId;
+        this.parentResrcId = parentResrcId;
 
         switch (parentResourcePath) {
             case "projects":
@@ -126,7 +130,19 @@ public class ResourceDeleter
                 deleteResource(parentResrc, parentResrc.getResources(), resource);
                 return;
             case "documents":
+                // TODO: delete file on dsk when deleted from database (consider parent project level deletion, &try to cascade)
                 Document document = entityManager.find(Document.class, subResrcId);
+                if (document != null) {
+                    // Retrieve file from disk
+                    File file = new File(System.getProperty("user.dir") + File.separator + "pm-uploads" + File.separator + parentResrcId + File.separator + document.getOsId());
+                    try {
+                        if (!file.delete()) {
+                            throw new IOException("Error deleting file " + file.getAbsolutePath());
+                        }
+                    } catch (SecurityException|IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 deleteResource(parentResrc, parentResrc.getDocuments(), document);
                 return;
             case "milestones":
